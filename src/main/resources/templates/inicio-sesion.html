@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -18,18 +18,13 @@
 
     <br><br><br>
 
-    <form role="form" class="register-form cf-style-1 text-center" style=" margin-bottom: 25px;" >
-        <div class="field-row">
-            <input type="email" class="le-input" placeholder="Usuario" required>
-        </div>
+    <form role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+    method="POST" modelAttribute="User">
+        <label>ID:</label> <input type='text' name='user' />
         <br>
+        <label>Password:</label> <input type='text' name='password' />
+        <button>Save</button>
 
-        <div class="field-row">
-            <input type="password" class="le-input" placeholder="Contraseña" required>
-        </div>
-        <br>
-        
-        <button type="button" class="btn btn-outline-primary btn-lg">Ingresar </button>
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
