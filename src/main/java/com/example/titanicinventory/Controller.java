@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
     @RequestMapping("/")
     String hello() {
-        return "Hello World, Spring Boot! 2";
+        return "Hello World, NEW REPOSITORY!";
     }
 }
