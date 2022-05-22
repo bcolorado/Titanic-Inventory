@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+body{
+    font-family: Cambria, serif;
+}
+.wrapper .sidenav{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 20vw;
+    height: 100vh;
+    background: #262218;
+}
+
+a{
+    color: #F1FAEE;
+    text-decoration: none;
+}
+
+.wrapper .sidenav h1{
+    color: #F1FAEE;
+    text-align:center;
+    line-height: 70px;
+}
+
+.wrapper .sidenav ul li{
+    list-style: none;
+    padding: 15px;
+}
+
+.wrapper .main-content{
+    width: 80vw;
+    margin-left: 20vw;
+}
+
+.wrapper .main-content h3{
+    color: #F1FAEE;
+}
+
+section{
+    height:100vh;
+    padding: 30px;
+    background: #1D3557;
+}
