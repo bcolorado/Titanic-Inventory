@@ -1,0 +1,33 @@
+﻿<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Inventario Titanico</title>
+  </head>
+
+
+  <body>
+    <div class="container p-1 my-1 bg-primary text-white text-center">
+        <h1>Titanic Inventory</h1>
+        <h4>Tu mejor opción</h4>
+    </div>
+
+    <br><br><br>
+
+    <form role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+    method="POST" modelAttribute="User">
+        <label>ID:</label> <input type='text' name='user' />
+        <br>
+        <label>Password:</label> <input type='password' name='password' />
+        <br>
+        <button>Save</button>
+
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
