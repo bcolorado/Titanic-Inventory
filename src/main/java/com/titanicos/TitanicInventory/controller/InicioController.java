@@ -92,18 +92,8 @@ public class InicioController {
         logRepo.findAll().forEach(event -> System.out.println(event.toString()));
         System.out.println("-----------------------------------------------");
     }
-    public byte[] generateSalt() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-        return salt;
-    }
-    public byte[] hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        byte[] hash = factory.generateSecret(spec).getEncoded();
-        return hash;
-    }
+
+    // verify password using user salt
     public boolean verifyPassword(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] salt = user.getSalt();
         KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
