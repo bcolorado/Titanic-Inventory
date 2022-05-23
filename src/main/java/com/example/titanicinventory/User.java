@@ -16,9 +16,7 @@ public class User {
     public String getName(){
         return name;
     }
-
-
-
+    
     public void setName(String s){
         name = s;
     }
@@ -45,5 +43,15 @@ public class User {
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", rol='" + rol + '\'' +
+                ", contrasena='" + contrasena + '\'' +
+                '}';
     }
 }
