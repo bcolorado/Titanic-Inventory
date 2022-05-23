@@ -22,7 +22,7 @@ public class HomeController {
             return "redirect:" + "";
         }else {
             System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
-            return "home";
+            return "home_admin";
         }
     }
 

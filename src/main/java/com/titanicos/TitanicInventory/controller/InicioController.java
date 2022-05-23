@@ -33,7 +33,7 @@ public class InicioController {
         return "login";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping("")
     public String Inicio(final Model model,@ModelAttribute User userAcc, @RequestParam("user") String user, @RequestParam("password") String password, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("here:"+user);
         String ip = request.getRemoteAddr();
@@ -41,7 +41,7 @@ public class InicioController {
         if (LogIn(user, password, ip)) {
             System.out.println("logged in:"+user);
             model.addAttribute("logged_user",userRepo.findUserByName(user));
-            return "redirect:home";
+            return "redirect:"+"home";
         }else {
             System.out.println("wrong password:"+user);
             return "";
