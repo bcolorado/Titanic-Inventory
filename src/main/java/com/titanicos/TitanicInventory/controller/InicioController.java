@@ -30,7 +30,7 @@ public class InicioController {
     @GetMapping("")
     public String Inicio(){
         System.out.println("INICIO!");
-        return "inicio-sesion";
+        return "login";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
