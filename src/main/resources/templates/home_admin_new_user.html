@@ -3,8 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{css/sidenav.css}">
 </head>
 <body>
+<div class="wrapper">
 
+    <div class="sidenav">
+        <h1>Titanic Inventory</h1>
+
+        <ul>
+            <li><a th:href="@{home_admin}"> Inicio</a></li>
+            <li><a href="#"> Usuarios</a></li>
+            <br>
+            <br>
+            <br>
+            <li><a th:href="@{login}">Cerrar Sesión></a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <section class="section1">
+            <form role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+                  method="POST" modelAttribute="NewUser">
+                <label>ID:</label> <input type='text' name='new_user' />
+                <br>
+                <label>Password:</label> <input type='password' name='new_password' />
+                <br>
+                <label>Name:</label> <input type='text' name='new_name' />
+                <br>
+                <label>Rol:</label> <input type='text' name='new_rol' />
+                <br>
+                <button>Save</button>
+
+            </form>
+        </section>
+    </div>
+
+</div>
 </body>
 </html>
