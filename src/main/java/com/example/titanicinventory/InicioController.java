@@ -24,4 +24,9 @@ public class InicioController {
     public String Home(){
         return "home_admin";
     }
+
+    @RequestMapping("/home_admin_users")
+    public String Users(){
+        return "home_admin_users";
+    }
 }
