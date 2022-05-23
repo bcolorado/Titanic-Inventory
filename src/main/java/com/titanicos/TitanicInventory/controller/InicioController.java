@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -34,10 +35,17 @@ public class InicioController {
         return "login";
     }
 
-    @GetMapping("login")
-    public String Inicio2(){
-        System.out.println("INICIO LUEGO DE CERRAR SESIÓN");
-        return "login";
+//    @GetMapping("login")
+//    public String Inicio2(){
+//        System.out.println("INICIO LUEGO DE CERRAR SESIÓN");
+//        return "login";
+//    }
+
+    @RequestMapping("/logout")
+    public String Inicio2(Model model, HttpSession session){
+        model.asMap().clear();
+        session.invalidate();
+        return "redirect:"+"";
     }
 
     @RequestMapping("")
@@ -45,13 +53,24 @@ public class InicioController {
                          @RequestParam("user") String user,
                          @RequestParam("password") String password,
                          HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        System.out.println("here:"+user);
         String ip = request.getRemoteAddr();
         if (LogIn(user, password, ip)) {
-            System.out.println("logged in:"+user);
-            model.addAttribute("logged_user",userRepo.findUserByName(user));
+            User loggedAcc = userRepo.findUserByName(user);
+            model.addAttribute("logged_user",loggedAcc);
             logRepo.save(new LogEvent("USER LOGIN",user,ip));
-            return "redirect:"+"home_admin";
+            String role = loggedAcc.getRol();
+            if (loggedAcc.getRol().equals("administrador")) {
+                System.out.println("logged in:"+user+" as admin");
+                return "redirect:"+"home_admin";
+            }else if (loggedAcc.getRol().equals("vendedor")){
+                System.out.println("logged in:"+user+" as seller");
+                //return "redirect:"+"home_seller"; // para cuando este home de vendedor
+                return "login";
+            }else {
+                System.out.println("logged in:"+user+" with wrong role");
+                return "login";
+            }
+
         }else {
             return "login";
         }
@@ -63,10 +82,9 @@ public class InicioController {
     boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("Getting "+user+" info...");
         User loginUser = userRepo.findUserByName(user);
-        logRepo.save(new LogEvent("LOGIN ATTEMPT",user,ip));
         if (loginUser == null) {
             System.out.println("User doesn't exists...");
-            logRepo.save(new LogEvent("USER DOESN'T EXIST",user,ip));
+            logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));
             return false;
         }else {
             System.out.println("Verifying user...");
