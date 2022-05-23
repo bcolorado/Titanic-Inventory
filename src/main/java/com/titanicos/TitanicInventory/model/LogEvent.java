@@ -4,9 +4,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document("testLog")
-public class TestLogEvent {
-    public TestLogEvent(String action, String user, String ip) {
+@Document("ActionLog")
+public class LogEvent {
+    public LogEvent(String action, String user, String ip) {
         this.action = action;
         this.user = user;
         this.ip = ip;
@@ -43,6 +43,16 @@ public class TestLogEvent {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public String toString() {
+        return "LogEvent{" +
+                "action='" + action + '\'' +
+                ", user='" + user + '\'' +
+                ", ip='" + ip + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
     }
 
     private String action;

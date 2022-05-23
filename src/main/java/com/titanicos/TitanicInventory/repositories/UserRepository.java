@@ -1,4 +1,4 @@
-package com.titanicos.TitanicInventory;
+package com.titanicos.TitanicInventory.repositories;
 
 
 import com.titanicos.TitanicInventory.model.User;
