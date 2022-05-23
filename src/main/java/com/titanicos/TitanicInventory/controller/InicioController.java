@@ -1,24 +1,31 @@
 package com.titanicos.TitanicInventory.controller;
 
-import com.titanicos.TitanicInventory.TestLogRepository;
-import com.titanicos.TitanicInventory.UserRepository;
-import com.titanicos.TitanicInventory.model.TestLogEvent;
+import com.titanicos.TitanicInventory.repositories.LogRepository;
+import com.titanicos.TitanicInventory.repositories.UserRepository;
 import com.titanicos.TitanicInventory.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.util.Arrays;
 
 @Controller
+@SessionAttributes("logged_user")
 public class InicioController {
 
     @Autowired
     UserRepository userRepo;
     @Autowired
-    TestLogRepository logRepo;
+    LogRepository logRepo;
 
     @GetMapping("")
     public String Inicio(){
@@ -26,75 +33,76 @@ public class InicioController {
         return "inicio-sesion";
     }
 
-    @RequestMapping("")
-    public String Inicio(@RequestParam("user") String user, @RequestParam("password") String password, HttpServletRequest request){
-        System.out.println("User: " + user);
-        System.out.println("Password: " + password);
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String Inicio(final Model model,@ModelAttribute User userAcc, @RequestParam("user") String user, @RequestParam("password") String password, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        System.out.println("here:"+user);
         String ip = request.getRemoteAddr();
-        createUser(user, password, ip);
-        return "redirect:home";
+        System.out.println(userRepo.findUserByName(user).toString());
+        if (LogIn(user, password, ip)) {
+            System.out.println("logged in:"+user);
+            model.addAttribute("logged_user",userRepo.findUserByName(user));
+            return "redirect:home";
+        }else {
+            System.out.println("wrong password:"+user);
+            return "";
+        }
+
     }
 
-    @RequestMapping("/home")
-    public String Home(){
-
-        showAllUsers();
-        showLog();
-        return "home";
-    }
 
     // CREATES an USER in the database
-    void createUser(String user, String password, String ip) {
-        System.out.println("Creating User...");
-        User test = userRepo.findUserByName(user);
-        if (test != null) {
-            System.out.println("Already exists.");
+    boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        System.out.println("Getting "+user+" info...");
+        User loginUser = userRepo.findUserByName(user);
+        if (loginUser == null) {
+            System.out.println("User doesn't exists...");
+            return false;
         }else {
-            userRepo.save(new User(user, password));
-            logRepo.save(new TestLogEvent("INSERT","dev_test",ip));
+            System.out.println("Verifying user...");
+            System.out.println(user.toString());
+            return verifyPassword(loginUser,password);
+            //logRepo.save(new LogEvent("Create account","test",ip));
         }
-        System.out.println("Saved User: "+user);
+    }
+
+    @ModelAttribute("logged_user")
+    public User logged_user(){
+        return new User();
     }
 
     // READ and SHOW ALL USERS IN CONSOLE
     public void showAllUsers() {
         System.out.println("-----------------------------------------------");
         System.out.println("SHOWING ALL USERS");
-        userRepo.findAll().forEach(user -> System.out.println(getUserDetails(user)));
+        userRepo.findAll().forEach(user -> System.out.println(user.toString()));
         System.out.println("-----------------------------------------------");
     }
-    // Print details in readable form
 
-    public String getUserDetails(User user) {
-
-        System.out.println(
-                "Name: " + user.getName() +
-                        ", \nPassword: " + user.getPassword()
-        );
-
-        return "";
-    }
     // READ and SHOW ALL USERS IN CONSOLE
     public void showLog() {
         System.out.println("-----------------------------------------------");
         System.out.println("SHOWING ACTION LOG");
-        logRepo.findAll().forEach(event -> System.out.println(getLogDetails(event)));
+        logRepo.findAll().forEach(event -> System.out.println(event.toString()));
         System.out.println("-----------------------------------------------");
     }
-    // Print details in readable form
-
-    public String getLogDetails(TestLogEvent event) {
-        String[] in = event.getIp().split(":");
-        //in[in.length - 2] = "***";
-        //in[in.length - 1] = "***";
-        String ip = String.join(".",in);
-        System.out.println(
-                "Timestamp: " + event.getTimestamp() +
-                        ", \nAction: " + event.getAction() +
-                        ", \nUser: " + event.getUser() +
-                        ", \nIP: " + ip
-        );
-
-        return "";
+    public byte[] generateSalt() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return salt;
     }
+    public byte[] hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hash = factory.generateSecret(spec).getEncoded();
+        return hash;
+    }
+    public boolean verifyPassword(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] salt = user.getSalt();
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] testHash = factory.generateSecret(spec).getEncoded();
+        return (Arrays.equals(user.getPassword(),testHash));
+    }
+
 }
