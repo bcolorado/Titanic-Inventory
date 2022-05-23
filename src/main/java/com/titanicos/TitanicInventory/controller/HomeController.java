@@ -12,15 +12,14 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @Controller
 public class HomeController {
 
-    @RequestMapping("/home")
+    @RequestMapping("/home_admin")
     public String Home(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
         if (userAcc == null){
             System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else {
-            System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
+            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             return "home_admin";
         }
     }
-
 }

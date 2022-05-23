@@ -14,12 +14,20 @@
         <ul>
             <li><a th:href="@{home_admin}"> Inicio</a></li>
             <li><a href="#"> Usuarios</a></li>
+            <br>
+            <br>
+            <br>
+            <li><a th:href="@{login}">Cerrar Sesión></a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <section class="section1">
-            <h3>USER LIST</h3>
+            <a th:href="@{home_admin_new_user}"> Nuevo Usuario</a>
+            <li th:each="user: ${users}">
+                <td th:text="${user.id}" />
+                <td th:text="${user.name}" />
+            </li>
         </section>
     </div>
 
