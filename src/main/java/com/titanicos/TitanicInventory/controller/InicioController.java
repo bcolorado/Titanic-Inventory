@@ -1,5 +1,6 @@
 package com.titanicos.TitanicInventory.controller;
 
+import com.titanicos.TitanicInventory.model.LogEvent;
 import com.titanicos.TitanicInventory.repositories.LogRepository;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
 import com.titanicos.TitanicInventory.model.User;
@@ -37,14 +38,13 @@ public class InicioController {
     public String Inicio(final Model model,@ModelAttribute User userAcc, @RequestParam("user") String user, @RequestParam("password") String password, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("here:"+user);
         String ip = request.getRemoteAddr();
-        System.out.println(userRepo.findUserByName(user).toString());
         if (LogIn(user, password, ip)) {
             System.out.println("logged in:"+user);
             model.addAttribute("logged_user",userRepo.findUserByName(user));
+            logRepo.save(new LogEvent("USER LOGIN",user,ip));
             return "redirect:"+"home";
         }else {
-            System.out.println("wrong password:"+user);
-            return "";
+            return "login";
         }
 
     }
@@ -54,14 +54,21 @@ public class InicioController {
     boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("Getting "+user+" info...");
         User loginUser = userRepo.findUserByName(user);
+        logRepo.save(new LogEvent("LOGIN ATTEMPT",user,ip));
         if (loginUser == null) {
             System.out.println("User doesn't exists...");
+            logRepo.save(new LogEvent("USER DOESN'T EXIST",user,ip));
             return false;
         }else {
             System.out.println("Verifying user...");
             System.out.println(user.toString());
-            return verifyPassword(loginUser,password);
-            //logRepo.save(new LogEvent("Create account","test",ip));
+            if (verifyPassword(loginUser,password)){
+                return true;
+            }else {
+                System.out.println("wrong password:"+user);
+                logRepo.save(new LogEvent("FAILED LOGIN (WRONG PASSWORD)",user,ip));
+                return false;
+            }
         }
     }
 
