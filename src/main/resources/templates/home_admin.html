@@ -17,15 +17,19 @@
                 <br>
                 <br>
                 <br>
-                <li><a th:href="@{login}">Cerrar Sesión></a></li>
+                <li><a th:href="@{logout}">Cerrar Sesión></a></li>
             </ul>
         </div>
 
         <div class="main-content">
             <section class="section1">
-                <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A adipisci amet cum deleniti dicta, enim
-                    esse excepturi exercitationem facilis inventore ipsum iusto numquam perspiciatis provident quia
-                    suscipit ut! Neque, tempore.</h3>
+                <h3 th:text="${logged_user.name}"></h3>
+                <ul>
+                    <li>username: </li>
+                    <li th:text="${logged_user.id}"></li>
+                    <li>rol: </li>
+                    <li th:text="${logged_user.rol}"></li>
+                </ul>
             </section>
         </div>
 

@@ -31,16 +31,23 @@ public class TitanicInventoryApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void checkDevAccount() throws NoSuchAlgorithmException, InvalidKeySpecException {
-		System.out.println("Creating dev account...");
-		SecureRandom random = new SecureRandom();
-		byte[] salt = new byte[16];
-		random.nextBytes(salt);
-		KeySpec spec = new PBEKeySpec("password".toCharArray(), salt, 65536, 128);
-		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-		byte[] hash = factory.generateSecret(spec).getEncoded();
-		User devAcc = new User("developer",hash,salt,"Desarrollador","administrador");
-		devRepo.save(devAcc);
-		System.out.println("Created dev account...");
+		System.out.println("Checking for dev account...");
+		User test = devRepo.findUserByName("developer");
+		if (test == null) {
+			System.out.println("Creating dev account...");
+			SecureRandom random = new SecureRandom();
+			byte[] salt = new byte[16];
+			random.nextBytes(salt);
+			KeySpec spec = new PBEKeySpec("password".toCharArray(), salt, 65536, 128);
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			byte[] hash = factory.generateSecret(spec).getEncoded();
+			User devAcc = new User("developer", hash, salt, "Desarrollador", "administrador");
+			devRepo.save(devAcc);
+			System.out.println("Created dev account...");
+		}else {
+			System.out.println("dev account already exists...");
+		}
+		System.out.println("Application Ready");
 	}
 
 }
