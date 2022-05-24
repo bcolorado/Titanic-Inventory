@@ -13,9 +13,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
@@ -55,7 +53,7 @@ public class InicioController {
                          HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String ip = request.getRemoteAddr();
         if (LogIn(user, password, ip)) {
-            User loggedAcc = userRepo.findUserByName(user);
+            User loggedAcc = userRepo.findUserByID(user);
             model.addAttribute("logged_user",loggedAcc);
             logRepo.save(new LogEvent("USER LOGIN",user,ip));
             String role = loggedAcc.getRol();
@@ -81,7 +79,7 @@ public class InicioController {
     // CREATES an USER in the database
     boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("Getting "+user+" info...");
-        User loginUser = userRepo.findUserByName(user);
+        User loginUser = userRepo.findUserByID(user);
         if (loginUser == null) {
             System.out.println("User doesn't exists...");
             logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));

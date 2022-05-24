@@ -23,11 +23,14 @@
 
     <div class="main-content">
         <section class="section1">
-            <a th:href="@{home_admin_new_user}"> Nuevo Usuario</a>
+            <a th:href="@{home_admin_new_user}">Nuevo Usuario</a>
             <li th:each="user: ${users}">
                 <td th:text="${user.id}" />
                 <td th:text="${user.name}" />
                 <td th:text="${user.rol}" />
+                <td>
+                    <a th:href="@{edit(id=${user.id})}">Editar</a>
+                </td>
             </li>
         </section>
     </div>
