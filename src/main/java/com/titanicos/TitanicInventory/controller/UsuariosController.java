@@ -17,6 +17,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class UsuariosController {
@@ -89,8 +92,12 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             System.out.println("EDIT USER FORM!");
+            List<String> roles = new ArrayList<String>();
+            roles.add("vendedor");
+            roles.add("administrador");
             User userToEdit = userRepo.findUserByID(edit_id);
             model.addAttribute("userToEdit", userToEdit);
+            model.addAttribute("roles",roles);
             return "home_admin_edit_user";
         }else {
             System.out.println("Wrong role, redirecting...");
