@@ -11,12 +11,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 
 @SpringBootApplication
 @EnableMongoRepositories
@@ -32,7 +30,7 @@ public class TitanicInventoryApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	public void checkDevAccount() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		System.out.println("Checking for dev account...");
-		User test = devRepo.findUserByName("developer");
+		User test = devRepo.findUserByID("developer");
 		if (test == null) {
 			System.out.println("Creating dev account...");
 			SecureRandom random = new SecureRandom();
