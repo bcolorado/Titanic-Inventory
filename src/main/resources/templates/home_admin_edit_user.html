@@ -30,7 +30,9 @@
                 <br>
                 <label>Name:</label> <input type='text' name='new_name' th:value="${userToEdit.name}" />
                 <br>
-                <label>Rol:</label> <input type='text' name='new_rol' th:value="${userToEdit.rol}" />
+                <label>Rol:</label> <select name="new_rol">
+                <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}" th:selected="${rol==userToEdit.rol}"></option>
+            </select>
                 <br>
                 <button>Save</button>
 
