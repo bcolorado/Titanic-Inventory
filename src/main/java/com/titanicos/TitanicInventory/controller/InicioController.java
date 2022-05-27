@@ -29,8 +29,7 @@ public class InicioController {
 
     @GetMapping("")
     public String Inicio(){
-        System.out.println("INICIO!");
-        return "login";
+        return "index";
     }
 
 //    @GetMapping("login")
