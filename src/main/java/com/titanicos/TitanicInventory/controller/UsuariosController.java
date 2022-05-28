@@ -42,7 +42,7 @@ public class UsuariosController {
         }else if (userAcc.getRol().equals("administrador")) {
             User[] users = userRepo.findAll().toArray(new User[0]);
             model.addAttribute("users", users);
-            return "home_admin_users";
+            return "new_admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -263,7 +263,7 @@ public class UsuariosController {
         try {
             User test = userRepo.findUserByID(user);
             if (user.equals(author)) {
-                System.out.println("Can't delete your self.");
+                System.out.println("Can't delete yourself.");
                 return false;
             }else if(user.equals("developer")) {
                 System.out.println("Can't delete developer account.");
