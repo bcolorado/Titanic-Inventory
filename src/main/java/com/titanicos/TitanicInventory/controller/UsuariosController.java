@@ -40,7 +40,7 @@ public class UsuariosController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
-            User[] users = userRepo.findAll().toArray(new User[0]);
+            User[] users = userRepo.findUsersByActive(true).toArray(new User[0]);
             model.addAttribute("users", users);
             return "home_admin_users";
         }else {
@@ -273,7 +273,9 @@ public class UsuariosController {
                     System.out.println("User doesn't exist.");
                     return false;
                 }else {
-                    userRepo.deleteById(user);
+                    test.setActive(false);
+                    userRepo.save(test);
+                    //userRepo.deleteById(user);
                     logRepo.save(new LogEvent("ACCOUNT "+user+" DELETED", author, ip));
                     System.out.println("ACCOUNT " + user + " DELETED");
                     return true;

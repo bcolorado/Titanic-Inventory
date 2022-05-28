@@ -80,11 +80,16 @@ public class InicioController {
     boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("Getting "+user+" info...");
         User loginUser = userRepo.findUserByID(user);
+        //System.out.println(loginUser.getActive());
         if (loginUser == null) {
             System.out.println("User doesn't exists...");
             logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));
             return false;
-        }else {
+        } else if (!loginUser.getActive()) {
+            System.out.println("User is inactive...");
+            logRepo.save(new LogEvent("LOGIN ATTEMPT - Log-IN with inactive acc",user,ip));
+            return false;
+        } else {
             System.out.println("Verifying user...");
             System.out.println(user.toString());
             if (verifyPassword(loginUser,password)){
