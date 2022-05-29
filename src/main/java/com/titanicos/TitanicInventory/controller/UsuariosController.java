@@ -173,7 +173,7 @@ public class UsuariosController {
                 System.out.println("One or more input values empty.");
                 return false;
             }else {
-                if (test == null) {
+                if (test == null || !test.getActive()) {
                     byte[] salt = new byte[16];
                     salt = generateSalt();
                     byte[] hash = hashPassword(password, salt);
