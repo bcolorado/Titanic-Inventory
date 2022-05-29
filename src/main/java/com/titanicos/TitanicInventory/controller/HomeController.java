@@ -20,7 +20,7 @@ public class HomeController {
         }else if (userAcc.getRol().equals("administrador")) {
             //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
-            return "new_admin";
+            return "admin";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";

@@ -17,13 +17,13 @@
             <a href="#" class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
             <ul class="list-unstyled components mb-5">
                 <li>
-                    <a href="#">Inicio</a>
-                </li>
-                <li class="active">
-                    <a href="#">Usuarios</a>
+                    <a th:href="@{admin}">Inicio</a>
                 </li>
                 <li>
-                    <a href="#">Productos</a>
+                    <a th:href="@{admin_users}">Usuarios</a>
+                </li>
+                <li class="active">
+                    <a th:href="@{admin_products}">Productos</a>
                 </li>
             </ul>
 
@@ -50,6 +50,7 @@
         </nav>
 
         <div class="container">
+            <td><a th:href="@{admin_new_user}" class="btn btn-info">Nuevo usuario</a></td>
             <div class="row justify-content-center">
                 <div class="col-md-6 text-center mb-5">
                     <h2 class="heading-section">Usuarios</h2>
@@ -73,7 +74,7 @@
                                 <th scope="row" th:text="${user.id}"></th>
                                 <td th:text="${user.name}"></td>
                                 <td th:text="${user.rol}"></td>
-                                <td><a href="@{edit(id=${user.id})}" class="btn btn-success">Editar</a></td>
+                                <td><a th:href="@{edit(id=${user.id})}" class="btn btn-success">Editar</a></td>
                             </tr>
                             </tbody>
                         </table>

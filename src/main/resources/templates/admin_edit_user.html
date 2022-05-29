@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Sidebar 01</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{css/style_home.css}">
+</head>
+<body>
+
+<div class="wrapper d-flex align-items-stretch">
+    <nav id="sidebar">
+        <div class="p-4 pt-5">
+            <a href="#" class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
+            <ul class="list-unstyled components mb-5">
+                <li>
+                    <a th:href="@{admin}">Inicio</a>
+                </li>
+                <li class="active">
+                    <a th:href="@{admin_users}">Usuarios</a>
+                </li>
+                <li>
+                    <a th:href="@{admin_products}">Productos</a>
+                </li>
+            </ul>
+
+            <div class="footer">
+                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Titanic Inventory</a>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content" class="p-4">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h3 th:text="${userToEdit.id}"></h3>
+            <form th:action="@{edit(id=${userToEdit.id})}" class="edit_user-form" method="POST" modelAttribute="userToEdit">
+                <div class="form-group mt-3">
+                    <input name="new_user" type="text" class="form-control" required>
+                    <label class="form-control-placeholder">ID</label>
+                </div>
+                <div class="form-group mt-3">
+                    <input name="new_name" type="text" class="form-control" required>
+                    <label class="form-control-placeholder">Nombre de usuario</label>
+                </div>
+                <div class="form-group mt-3">
+                    <input name="new_password" type="text" class="form-control" required>
+                    <label class="form-control-placeholder">Contraseña</label>
+                </div>
+                <div class="form-group mt-3">
+                    <select name='new_rol'>
+                        <option value="vendedor">Vendedor</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                    <label class="form-control-placeholder">Rol</label>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Crear usuario</button>
+                </div>
+                <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            </form>
+            <form th:action="@{delete(id=${userToEdit.id})}" role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+                  method="POST" modelAttribute="userToEdit">
+                <button class="form-control btn btn-primary rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar usuario ${userToEdit.id}?|"
+                        onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{js/home_jquery.min.js}"></script>
+<script th:src="@{js/home_main.js}"></script>
+</body>
+</html>

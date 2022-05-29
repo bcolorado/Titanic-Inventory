@@ -31,7 +31,7 @@ public class UsuariosController {
     LogRepository logRepo;
 
 
-    @RequestMapping("/home_admin_users")
+    @RequestMapping("/admin_users")
     public String Admin_users(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -42,14 +42,14 @@ public class UsuariosController {
         }else if (userAcc.getRol().equals("administrador")) {
             User[] users = userRepo.findAll().toArray(new User[0]);
             model.addAttribute("users", users);
-            return "new_admin_users";
+            return "admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
 
-    @RequestMapping("/home_admin_new_user")
+    @RequestMapping("/admin_new_user")
     public String New_user(@SessionAttribute(required=false,name="logged_user") User userAcc,
                            final Model model,
                            @RequestParam("new_user") String user,
@@ -66,17 +66,17 @@ public class UsuariosController {
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
             CreateUser(user,password,name,rol,userAcc.getId(),ip);
-            return "redirect:"+"home_admin_users";
+            return "redirect:"+"admin_new_user";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
 
-    @GetMapping("/home_admin_new_user")
+    @GetMapping("/admin_new_user")
     public String Inicio(){
         System.out.println("NEW USER FORM!");
-        return "home_admin_new_user";
+        return "admin_new_user";
     }
 
     @GetMapping("/edit")
@@ -98,7 +98,7 @@ public class UsuariosController {
             User userToEdit = userRepo.findUserByID(edit_id);
             model.addAttribute("userToEdit", userToEdit);
             model.addAttribute("roles",roles);
-            return "home_admin_edit_user";
+            return "admin_edit_user";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -122,7 +122,7 @@ public class UsuariosController {
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
             UpdateUser(edit_id,password,name,rol,userAcc.getId(),ip);
-            return "redirect:"+"home_admin_users";
+            return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -143,7 +143,7 @@ public class UsuariosController {
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
             DeleteUser(edit_id,userAcc.getId(),ip);
-            return "redirect:"+"home_admin_users";
+            return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";

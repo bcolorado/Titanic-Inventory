@@ -14,16 +14,16 @@
 		<div class="wrapper d-flex align-items-stretch">
 			<nav id="sidebar">
 				<div class="p-4 pt-5">
-		  		<a href="#" class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
+		  		<a class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
 	        <ul class="list-unstyled components mb-5">
 	          <li class="active">
-	            <a href="#">Inicio</a>
+	            <a th:href="@{admin}">Inicio</a>
 	          </li>
 	          <li>
-	              <a th:href="@{home_admin_users}">Usuarios</a>
+	              <a th:href="@{admin_users}">Usuarios</a>
 	          </li>
 	          <li>
-              <a href="#">Productos</a>
+              <a th:href="@{admin_products}">Productos</a>
 	          </li>
 	        </ul>
 
