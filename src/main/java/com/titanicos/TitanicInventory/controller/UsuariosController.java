@@ -40,8 +40,11 @@ public class UsuariosController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
-            User[] users = userRepo.findUsersByActive(true).toArray(new User[0]);
-            model.addAttribute("users", users);
+            List userList = userRepo.findUsersByActive(true); // Get list of all active users in database.
+            userList.remove(0); // removes developer, we don't want to see or be able to edit developer account
+            User[] users = new User[userList.size()]; // creates empty array
+            userList.toArray(users); // pass the list of users (minus developer) to the array
+            model.addAttribute("users", users); // pass the array to the model, so front end can use that info to list users.
             return "admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -287,11 +290,4 @@ public class UsuariosController {
         }
     }
 
-    // READ and SHOW ALL USERS IN CONSOLE
-    public void showAllUsers() {
-        System.out.println("-----------------------------------------------");
-        System.out.println("SHOWING ALL USERS");
-        userRepo.findAll().forEach(user -> System.out.println(user.toString()));
-        System.out.println("-----------------------------------------------");
-    }
 }

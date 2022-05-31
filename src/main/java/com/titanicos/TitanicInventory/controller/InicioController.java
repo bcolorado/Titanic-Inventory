@@ -55,7 +55,6 @@ public class InicioController {
             User loggedAcc = userRepo.findUserByID(user);
             model.addAttribute("logged_user",loggedAcc);
             logRepo.save(new LogEvent("USER LOGIN",user,ip));
-            String role = loggedAcc.getRol();
             if (loggedAcc.getRol().equals("administrador")) {
                 System.out.println("logged in:"+user+" as admin");
                 return "redirect:"+"admin";
@@ -108,22 +107,6 @@ public class InicioController {
     @ModelAttribute("logged_user")
     public User logged_user(){
         return new User();
-    }
-
-    // READ and SHOW ALL USERS IN CONSOLE
-    public void showAllUsers() {
-        System.out.println("-----------------------------------------------");
-        System.out.println("SHOWING ALL USERS");
-        userRepo.findAll().forEach(user -> System.out.println(user.toString()));
-        System.out.println("-----------------------------------------------");
-    }
-
-    // READ and SHOW ALL USERS IN CONSOLE
-    public void showLog() {
-        System.out.println("-----------------------------------------------");
-        System.out.println("SHOWING ACTION LOG");
-        logRepo.findAll().forEach(event -> System.out.println(event.toString()));
-        System.out.println("-----------------------------------------------");
     }
 
     // verify password using user salt
