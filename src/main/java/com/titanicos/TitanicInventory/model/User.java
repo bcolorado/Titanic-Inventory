@@ -21,6 +21,7 @@ public class User {
         this.salt = salt;
         this.name = name;
         this.rol = rol;
+        this.active=true;
     }
 
     public String getId() {
@@ -63,6 +64,14 @@ public class User {
         this.rol = rol;
     }
 
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -71,7 +80,8 @@ public class User {
                 ", salt=" + Arrays.toString(salt) +
                 ", name='" + name + '\'' +
                 ", rol='" + rol + '\'' +
-                '}';
+                ", active="+active+'\''+
+        '}';
     }
 
     public User() {
@@ -84,5 +94,5 @@ public class User {
     private byte[] salt;
     private String name;
     private String rol;
-
+    private boolean active;
 }

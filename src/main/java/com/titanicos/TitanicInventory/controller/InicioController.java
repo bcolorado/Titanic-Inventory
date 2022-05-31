@@ -82,15 +82,20 @@ public class InicioController {
     }
 
 
-    // CREATES an USER in the database, returns 0 if user don´t exist, 1 if login was succesful, -1 if wrong password
+    // Verifies if user and password match to an active user in the database, returns 0 if user don´t exist, 1 if login was succesful, -1 if wrong password
 
     int LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         System.out.println("Getting " + user + " info...");
         User loginUser = userRepo.findUserByID(user);
+        //System.out.println(loginUser.getActive());
         if (loginUser == null) {
             logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));
             return 0;
-        }else {
+        } else if (!loginUser.getActive()) {
+            //System.out.println("User is inactive...");
+            logRepo.save(new LogEvent("LOGIN ATTEMPT - Log-IN with inactive acc",user,ip));
+            return 0;
+        } else {
             if (verifyPassword(loginUser,password)){
                 return 1;
             }else {
