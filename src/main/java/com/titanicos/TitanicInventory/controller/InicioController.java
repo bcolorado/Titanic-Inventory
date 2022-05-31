@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.swing.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -29,37 +31,34 @@ public class InicioController {
 
     @GetMapping("")
     public String Inicio(){
-        System.out.println("INICIO!");
         return "login";
     }
 
-//    @GetMapping("login")
-//    public String Inicio2(){
-//        System.out.println("INICIO LUEGO DE CERRAR SESIÓN");
-//        return "login";
-//    }
-
     @RequestMapping("/logout")
-    public String Inicio2(Model model, HttpSession session){
+    public String Logut(Model model, HttpSession session){
         model.asMap().clear();
         session.invalidate();
-        return "redirect:"+"";
+        return "redirect:";
     }
 
     @RequestMapping("")
     public String Inicio(final Model model,@ModelAttribute User userAcc,
                          @RequestParam("user") String user,
                          @RequestParam("password") String password,
-                         HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
+                         RedirectAttributes redirAttrs,
+                         HttpServletRequest request)
+                         throws NoSuchAlgorithmException,
+                         InvalidKeySpecException {
         String ip = request.getRemoteAddr();
-        if (LogIn(user, password, ip)) {
+        int login_answer = LogIn(user, password, ip);
+        if (login_answer == 1) {
             User loggedAcc = userRepo.findUserByID(user);
             model.addAttribute("logged_user",loggedAcc);
             logRepo.save(new LogEvent("USER LOGIN",user,ip));
             String role = loggedAcc.getRol();
             if (loggedAcc.getRol().equals("administrador")) {
                 System.out.println("logged in:"+user+" as admin");
-                return "redirect:"+"home_admin";
+                return "redirect:"+"admin";
             }else if (loggedAcc.getRol().equals("vendedor")){
                 System.out.println("logged in:"+user+" as seller");
                 //return "redirect:"+"home_seller"; // para cuando este home de vendedor
@@ -69,35 +68,39 @@ public class InicioController {
                 return "login";
             }
 
-        }else {
-            return "login";
+        }else if (login_answer == -1) {
+            redirAttrs.addFlashAttribute("error", "Contraseña incorrecta");
+            return "redirect:";
+        } else if (login_answer == 0) {
+            redirAttrs.addFlashAttribute("error", "Usuario no existe");
+            return "redirect:";
+        } else {
+            redirAttrs.addFlashAttribute("error", "Ha ocurrido un error");
+            return "redirect:";
         }
 
     }
 
 
-    // CREATES an USER in the database
-    boolean LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        System.out.println("Getting "+user+" info...");
+    // Verifies if user and password match to an active user in the database, returns 0 if user don´t exist, 1 if login was succesful, -1 if wrong password
+
+    int LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        System.out.println("Getting " + user + " info...");
         User loginUser = userRepo.findUserByID(user);
         //System.out.println(loginUser.getActive());
         if (loginUser == null) {
-            System.out.println("User doesn't exists...");
             logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));
-            return false;
+            return 0;
         } else if (!loginUser.getActive()) {
-            System.out.println("User is inactive...");
+            //System.out.println("User is inactive...");
             logRepo.save(new LogEvent("LOGIN ATTEMPT - Log-IN with inactive acc",user,ip));
-            return false;
+            return 0;
         } else {
-            System.out.println("Verifying user...");
-            System.out.println(user.toString());
             if (verifyPassword(loginUser,password)){
-                return true;
+                return 1;
             }else {
-                System.out.println("wrong password:"+user);
                 logRepo.save(new LogEvent("FAILED LOGIN (WRONG PASSWORD)",user,ip));
-                return false;
+                return -1;
             }
         }
     }

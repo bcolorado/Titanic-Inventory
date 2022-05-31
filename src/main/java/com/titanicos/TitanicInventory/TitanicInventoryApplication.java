@@ -2,7 +2,6 @@ package com.titanicos.TitanicInventory;
 
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -20,12 +19,15 @@ import java.security.spec.KeySpec;
 @EnableMongoRepositories
 public class TitanicInventoryApplication {
 
+	public TitanicInventoryApplication(UserRepository devRepo) {
+		this.devRepo = devRepo;
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(TitanicInventoryApplication.class, args);
 	}
 
-	@Autowired
-	UserRepository devRepo;
+	final UserRepository devRepo;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void checkDevAccount() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -42,8 +44,6 @@ public class TitanicInventoryApplication {
 			User devAcc = new User("developer", hash, salt, "Desarrollador", "administrador");
 			devRepo.save(devAcc);
 			System.out.println("Created dev account...");
-		}else {
-			System.out.println("dev account already exists...");
 		}
 		System.out.println("Application Ready");
 	}
