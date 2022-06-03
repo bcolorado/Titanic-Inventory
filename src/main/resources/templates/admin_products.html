@@ -50,7 +50,7 @@
         </nav>
 
         <div class="container">
-            <td><a th:href="@{admin_new_user}" class="btn btn-info">Nuevo usuario</a></td>
+            <td><a th:href="@{admin_new_products}" class="btn btn-info">Nuevo producto</a></td>
             <div class="row justify-content-center">
                 <div class="col-md-6 text-center mb-5">
                     <h2 class="heading-section">Productos</h2>
@@ -70,11 +70,11 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="user:${users}">
-                                <th scope="row" th:text="${user.id}"></th>
-                                <td th:text="${user.name}"></td>
-                                <td th:text="${user.rol}"></td>
-                                <td><a th:href="@{edit(id=${user.id})}" class="btn btn-success">Editar</a></td>
+                            <tr th:each="product:${productos}">
+                                <th scope="row" th:text="${product.id_name}"></th>
+                                <td th:text="${product.precio}"></td>
+                                <td th:text="${product.cantidad}"></td>
+                                <td><a th:href="@{edit_products(id=${product.id_name})}" class="btn btn-success">Editar</a></td>
                             </tr>
                             </tbody>
                         </table>

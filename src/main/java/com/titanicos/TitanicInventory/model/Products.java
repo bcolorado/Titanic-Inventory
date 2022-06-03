@@ -15,10 +15,11 @@ import java.util.Arrays;
 @Document("products")
 
 public class Products {
-    public Products(String id_name, float precio, int cantidad) {
+    public Products(String id_name, int precio, int cantidad) {
         this.id_name = id_name;
         this.precio = precio;
         this.cantidad=cantidad;
+        this.active=true;
     }
 
     public String getId_name() {
@@ -29,11 +30,11 @@ public class Products {
         this.id_name = id_name;
     }
 
-    public float getPrecio() {
+    public int getPrecio() {
         return precio;
     }
 
-    public void setPrecio(float precio) {
+    public void setPrecio(int precio) {
         this.precio = precio;
     }
 
@@ -57,8 +58,18 @@ public class Products {
     @Id
     private String id_name;
 
-    private float precio;
+    private int precio;
     private int cantidad;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    private boolean active;
 
 
 }

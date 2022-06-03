@@ -68,8 +68,7 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            CreateUser(user,password,name,rol,userAcc.getId(),ip);
-            return "redirect:"+"admin_new_user";
+            CreateUser(user,password,name,rol,userAcc.getId(),ip);return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -77,12 +76,25 @@ public class UsuariosController {
     }
 
     @GetMapping("/admin_new_user")
-    public String Inicio(){
+    public String Inicio(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
         System.out.println("NEW USER FORM!");
-        return "admin_new_user";
+        if (userAcc == null || userAcc.getRol() == null){
+            System.out.println("Not logged in, redirecting...");
+            return "redirect:";
+        }else if (userAcc.getRol().equals("vendedor")) {
+            System.out.println("Wrong role, redirecting...");
+            return "redirect:";
+        }else if (userAcc.getRol().equals("administrador")) {
+            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
+            model.addAttribute("logged_user", userAcc);
+            return "admin_new_user";
+        }else {
+            System.out.println("Wrong role, redirecting...");
+            return "redirect:";
+        }
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/edit_user")
     public String Edit_User(@RequestParam("id") String edit_id,
                             @SessionAttribute(required=false,name="logged_user") User userAcc,
                             final Model model){
@@ -108,7 +120,7 @@ public class UsuariosController {
         }
 
     }
-    @RequestMapping("/edit")
+    @RequestMapping("/edit_user")
     public String Edit_User(@RequestParam("id") String edit_id,
                             @SessionAttribute(required=false,name="logged_user") User userAcc,
                             final Model model,
@@ -132,7 +144,7 @@ public class UsuariosController {
         }
     }
 
-    @RequestMapping("/delete")
+    @RequestMapping("/delete_user")
     public String Delete_User(@RequestParam("id") String edit_id,
                             @SessionAttribute(required=false,name="logged_user") User userAcc,
                             final Model model,
@@ -285,7 +297,7 @@ public class UsuariosController {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to create account.");
+            System.out.println("Failed to delete account.");
             return false;
         }
     }
