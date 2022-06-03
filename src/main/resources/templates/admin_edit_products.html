@@ -19,10 +19,10 @@
                 <li>
                     <a th:href="@{admin}">Inicio</a>
                 </li>
-                <li>
+                <li class="active">
                     <a th:href="@{admin_users}">Usuarios</a>
                 </li>
-                <li class="active">
+                <li>
                     <a th:href="@{admin_products}">Productos</a>
                 </li>
             </ul>
@@ -50,24 +50,25 @@
         </nav>
 
         <div class="container">
-            <h3>Nuevo Producto</h3>
-            <form class="new_user-form" method="POST" modelAttribute="User">
+            <h3 th:text="${productToEdit.id_name}"></h3>
+            <form th:action="@{edit_products(id=${productToEdit.id_name})}" class="edit_product-form" method="POST" modelAttribute="productToEdit">
                 <div class="form-group mt-3">
-                    <input name="new_product" type="text" class="form-control" required>
-                    <label class="form-control-placeholder">Nombre</label>
-                </div>
-                <div class="form-group mt-3">
-                    <input name="new_price" type="number" min="0" max="1000000" class="form-control" required>
+                    <input name="new_price" type="number" min="0" max="1000000" class="form-control" required th:value="${productToEdit.precio}">
                     <label class="form-control-placeholder">Precio unitario</label>
                 </div>
                 <div class="form-group mt-3">
-                    <input name="new_quantity" type="number" min="0" max="1000000" class="form-control" required>
+                    <input name="new_quantity" type="number" min="0" max="1000000" class="form-control" required th:value="${productToEdit.cantidad}">
                     <label class="form-control-placeholder">Cantidad</label>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Crear producto</button>
+                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Guardar cambios</button>
                 </div>
                 <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            </form>
+            <form th:action="@{delete_products(id=${productToEdit.id_name})}" role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+                  method="POST" modelAttribute="productToEdit">
+                <button class="form-control btn btn-primary rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar producto ${productToEdit.id_name}?|"
+                        onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Borrar producto</button>
             </form>
         </div>
     </div>
