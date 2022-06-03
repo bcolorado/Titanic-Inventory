@@ -7,17 +7,18 @@ import com.titanicos.TitanicInventory.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,41 +220,44 @@ public class UsuariosController {
                 System.out.println("One or more input values empty.");
                 return false;
             }else if (password.equals("")){
-                String[] changes = new String[2];
+                String changes = new String();
                 if (!acc.getName().equals(name)){
                     String oldName = acc.getName();
                     acc.setName(name);
-                    changes[0] = "[NAME: " + oldName + " > " + name + "]";
+                    changes += "[NAME: " + oldName + " > " + name + "]";
                 }else {
-                    changes[0] = "NO CHANGES";
+                    changes += "";
                 }
                 if (!acc.getRol().equals(rol)){
                     String oldRol = acc.getRol();
                     acc.setRol(rol);
-                    changes[1] = "[ROL: " + oldRol + " > " + rol + "]";
+                    changes += "[ROL: " + oldRol + " > " + rol + "]";
                 }else {
-                    changes[1] = "";
+                    changes = "";
+                }
+                if (changes.equals("")) {
+                    changes = "NO CHANGES";
                 }
                 userRepo.save(acc);
-                logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED > " + changes[0] + changes[1], author, ip));
+                logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED > " + changes, author, ip));
                 System.out.println("Account updated:");
                 System.out.println(acc.toString());
                 return true;
             }else {
-                String[] changes = new String[3];
+                String changes = new String();
                 if (!acc.getName().equals(name)){
                     String oldName = acc.getName();
                     acc.setName(name);
-                    changes[0] = "[NAME: " + oldName + " > " + name + "]";
+                    changes += "[NAME: " + oldName + " > " + name + "]";
                 }else {
-                    changes[0] = "";
+                    changes += "";
                 }
                 if (!acc.getRol().equals(rol)){
                     String oldRol = acc.getRol();
                     acc.setRol(rol);
-                    changes[1] = "[ROL: " + oldRol + " > " + rol + "]";
+                    changes += "[ROL: " + oldRol + " > " + rol + "]";
                 }else {
-                    changes[1] = "";
+                    changes += "";
                 }
                 byte[] salt = new byte[16];
                 salt = generateSalt();
@@ -261,9 +265,9 @@ public class UsuariosController {
 
                 acc.setSalt(salt);
                 acc.setPassword(hash);
-                changes[2] = "[PASSWORD AND SALT UPDATED]";
+                changes += "[PASSWORD AND SALT UPDATED]";
                 userRepo.save(acc);
-                logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED: " + changes[0] + changes[1] + changes[2], author, ip));
+                logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED: " + changes, author, ip));
                 System.out.println("Account updated:");
                 System.out.println(acc.toString());
                 return true;

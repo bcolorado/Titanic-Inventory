@@ -1,8 +1,6 @@
 package com.titanicos.TitanicInventory.repositories;
 
-import com.titanicos.TitanicInventory.model.LogEvent;
 import com.titanicos.TitanicInventory.model.Products;
-import com.titanicos.TitanicInventory.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

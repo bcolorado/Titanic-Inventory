@@ -1,9 +1,9 @@
 package com.titanicos.TitanicInventory.controller;
 
 import com.titanicos.TitanicInventory.model.LogEvent;
+import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.LogRepository;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
-import com.titanicos.TitanicInventory.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.swing.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;

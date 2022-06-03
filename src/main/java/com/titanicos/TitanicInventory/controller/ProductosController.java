@@ -5,7 +5,6 @@ import com.titanicos.TitanicInventory.model.Products;
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.LogRepository;
 import com.titanicos.TitanicInventory.repositories.ProductRepository;
-import com.titanicos.TitanicInventory.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Controller
@@ -108,7 +105,7 @@ public class ProductosController {
                 if (test == null) {
                     Products producto=new Products(product,price,quantity);
                     ProductRepo.save(producto);
-                    logRepo.save(new LogEvent("PRODUCT "+producto+" CREATED", author, ip));
+                    logRepo.save(new LogEvent("PRODUCT "+product+" CREATED", author, ip));
                     //System.out.println("Created product:");
                     //System.out.println(newAcc.toString());
                     return true;
@@ -202,7 +199,7 @@ public class ProductosController {
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Failed to delate product.");
+            System.out.println("Failed to delete product.");
             return false;
         }
     }
@@ -215,30 +212,33 @@ public class ProductosController {
                 System.out.println("Name input is empty");
                 return false;
             }else {
-                String[] changes = new String[3];
+                String changes = new String();
                 if (!producto.getId_name().equals(product)){
                     String oldName = producto.getId_name();
                     producto.setId_name(product);
-                    changes[0] = "[NAME: " + oldName + " > " + product + "]";
+                    changes += "[NAME: " + oldName + " > " + product + "]";
                 }else {
-                    changes[0] = "";
+                    changes += "";
                 }
                 if (producto.getPrecio()!=price){
                     int oldPrice = producto.getPrecio();
                     producto.setPrecio(price);
-                    changes[1] = "[PRECIO: " + oldPrice + " > " + price + "]";
+                    changes += "[PRECIO: " + oldPrice + " > " + price + "]";
                 }else {
-                    changes[1] = "";
+                    changes += "";
                 }
                 if (producto.getCantidad()!=quantity){
                     int oldQuantity = producto.getCantidad();
                     producto.setCantidad(quantity);
-                    changes[1] = "[CANTIDAD: " + oldQuantity + " > " + quantity + "]";
+                    changes += "[CANTIDAD: " + oldQuantity + " > " + quantity + "]";
                 }else {
-                    changes[2] = "";
+                    changes += "";
+                }
+                if (changes.equals("")) {
+                    changes = "NO CHANGES";
                 }
                 ProductRepo.save(producto);
-                logRepo.save(new LogEvent("PRODUCT "+product+" UPDATED: " + changes[0] + changes[1] + changes[2], author, ip));
+                logRepo.save(new LogEvent("PRODUCT "+product+" UPDATED: " + changes, author, ip));
                 System.out.println("Product updated:");
                 System.out.println(producto.toString());
                 return true;
