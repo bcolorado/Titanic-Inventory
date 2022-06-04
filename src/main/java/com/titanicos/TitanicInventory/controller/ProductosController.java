@@ -28,7 +28,6 @@ public class ProductosController {
     @Autowired
     ProductRepository ProductRepo;
 
-
     @RequestMapping("/admin_products")
     public String Admin_users(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
 
@@ -212,7 +211,7 @@ public class ProductosController {
                 System.out.println("Name input is empty");
                 return false;
             }else {
-                String changes = new String();
+                String changes = ""; //replaced new String()
                 if (!producto.getId_name().equals(product)){
                     String oldName = producto.getId_name();
                     producto.setId_name(product);
@@ -240,7 +239,7 @@ public class ProductosController {
                 ProductRepo.save(producto);
                 logRepo.save(new LogEvent("PRODUCT "+product+" UPDATED: " + changes, author, ip));
                 System.out.println("Product updated:");
-                System.out.println(producto.toString());
+                System.out.println(producto); //removed .toString()
                 return true;
             }
         } catch (Exception e) {

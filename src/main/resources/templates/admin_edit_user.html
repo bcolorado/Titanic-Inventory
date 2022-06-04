@@ -76,6 +76,7 @@
                 <button class="form-control btn btn-primary rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar usuario ${userToEdit.id}?|"
                         onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Borrar Usuario</button>
             </form>
+            <a th:href="@{admin_users}" class="form-control btn btn-primary rounded submit px-3">Cancelar</a>
         </div>
     </div>
 </div>

@@ -9,44 +9,41 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" th:href="@{css/style_login.css}">
 
-	</head>
+</head>
 	<body>
-	<section class="ftco-section fixed-top no-gutters">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-7 col-lg-5">
-					<div class="wrap">
-						<div class="img" th:style="'background-image: url(/images/logo.png)'">
-
-						</div>
-						<div class="login-wrap p-4 p-md-5">
-			      	<div class="d-flex">
-			      		<div class="w-100">
-			      			<h3 class="mb-4">Inicio de sesión</h3>
-			      		</div>
-			      	</div>
-							<form class="signin-form" method="POST" modelAttribute="User">
-			      		<div class="form-group mt-3">
-			      			<input name="user" type="text" class="form-control" required>
-			      			<label class="form-control-placeholder">Usuario</label>
-			      		</div>
-		            <div class="form-group">
-		              <input name="password" type="password" class="form-control" required>
-		              <label class="form-control-placeholder">Contraseña</label>
-		            </div>
-		            <div class="form-group">
-		            	<button type="submit" class="form-control btn btn-primary rounded submit px-3">Ingresar</button>
-		            </div>
-					<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
-		          </form>
-
-		        </div>
-		      </div>
+		<section class="ftco-section fixed-top no-gutters">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-md-7 col-lg-5">
+						<div class="wrap">
+							<div class="img" th:style="'background-image: url(/images/logo.png)'">
+							</div>
+							<div class="login-wrap p-4 p-md-4">
+								<div class="d-flex" th:style="'margin-bottom: 40px'";>
+									<div class="w-100">
+										<h3 class="mb-0">Inicio de sesión</h3>
+									</div>
+								</div>
+								<form class="signin-form" method="POST" modelAttribute="User">
+									<div class="form-group">
+										<label>Usuario</label>
+										<input name="user" type="text" class="form-control" required>
+									</div>
+									<div class="form-group">
+											<label>Contraseña</label>
+											<input name="password" type="password" class="form-control" required>
+									</div>
+									<div class="form-group">
+										<button type="submit" class="form-control btn btn-primary rounded submit px-3">Ingresar</button>
+									</div>
+									<div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+			  					</form>
+							</div>
+		      			</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-
+		</section>
 	</body>
 </html>
 
