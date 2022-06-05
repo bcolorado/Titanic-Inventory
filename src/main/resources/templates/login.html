@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" th:href="@{css/style_login.css}">
@@ -21,7 +22,7 @@
 							<div class="login-wrap p-4 p-md-4">
 								<div class="d-flex" th:style="'margin-bottom: 40px'";>
 									<div class="w-100">
-										<h3 class="mb-0">Inicio de sesión</h3>
+										<h3 class="mb-0" id="msg_inicio" th:style="'font-family: seaside'";>Inicio de sesión</h3>
 									</div>
 								</div>
 								<form class="signin-form" method="POST" modelAttribute="User">

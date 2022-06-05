@@ -4,6 +4,9 @@
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
+
+
+
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -34,6 +37,13 @@
   --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
+@font-face {
+  font-family: 'seaside';
+  src: url('../fonts/SEASRN__-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 *,
 *::before,
 *::after {
@@ -61,6 +71,10 @@ body {
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
+
+#msg_inicio{
+  font-family: seaside;
+}
 
 hr {
   -webkit-box-sizing: content-box;
