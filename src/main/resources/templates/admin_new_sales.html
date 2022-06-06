@@ -78,10 +78,10 @@
                                     <tr th:each="product:${productos}">
                                         <th scope="row" th:text="${product.id_name}"></th>
                                         <td th:text="${product.precio}"></td>
-                                        <!--<td>
-                                            <input name="new_quantify" type="number" min="0" th:max="${product.cantidad}" class="form-control">
-                                        </td>-->
-                                        <td><input name="new_selected" type="checkbox" th:value="${product.id_name}"></td>
+                                        <td>
+                                            <input name="new_quantity" type="number" min="0" th:max="${product.cantidad}" class="form-control">
+                                        </td>
+                                        <td><input name="new_selected" type="checkbox" th:value="${product.id_name}" ></td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -77,8 +78,8 @@ public class SalesController {
     public String New_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
                               final Model model,
                               @RequestParam("new_id_sale") String id_sale,
-                              //@RequestParam("new_quantity") int[] quantity,
-                              @RequestParam("new_selected") String products,
+                              @RequestParam("new_quantity") List<Integer> quantity,
+                              @RequestParam("new_selected") List<String> products,
                               HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -87,11 +88,12 @@ public class SalesController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
-            //System.out.println(quantity);
+            System.out.println(quantity);
             System.out.println(products);
-            String [] ProductString = products.split(",");
+            //String [] ProductString = products.split(",");
+            while(quantity.remove(null));
             String ip = request.getRemoteAddr();
-            CreateSale(id_sale,ProductString,userAcc.getId(),ip);
+            CreateSale(id_sale,products,quantity,userAcc.getId(),ip);
             return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -99,7 +101,7 @@ public class SalesController {
         }
     }
 
-    public boolean CreateSale(String id_sale,String[] products, String author, String ip)  {
+    public boolean CreateSale(String id_sale,List<String> products,List<Integer> quantitys, String author, String ip)  {
         try {
             Sales test = saleRepo.findProductByID(id_sale);
             if ((id_sale.equals(""))) {
@@ -107,12 +109,18 @@ public class SalesController {
                 return false;
             }else {
                 if (test == null) {
-                    int quantify =10;
-                    Sales sale = new Sales(id_sale,author,quantify);
-                    for (String x : products){
-                        Products p1 = ProductRepo.findProductByID(x);
-                        sale.addProduct(p1);
+                    int quantity =0;
+                    Sales sale = new Sales(id_sale,author,quantity);
+                    for (int i=0;i<products.size();i++){
+                        if(products.get(i)!=null && quantitys.get(i)!=null){
+                            Products p1 = ProductRepo.findProductByID(products.get(i));
+                            p1.setCantidad(quantitys.get(i));
+                            sale.addProduct(p1);
+                            quantity+=p1.getCantidad()*p1.getPrecio();
+                        }
+
                     }
+                    sale.setQuantity(quantity);
                     saleRepo.save(sale);
                     logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
                     //System.out.println("Created product:");
