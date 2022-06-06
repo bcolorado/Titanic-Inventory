@@ -34,14 +34,15 @@
 
     <!-- Page Content  -->
     <div id="content" class="p-4">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                    <i class="fa fa-bars"></i>
-                    <span class="sr-only">Toggle Menu</span>
-                </button>
-            </div>
-        </nav>
+        <div class="container-fluid">
+            <button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+                <i class="fa fa-bars"></i>
+                <span class="sr-only">Toggle Menu</span>
+            </button>
+            <a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+                Cerrar sesión
+            </a>
+        </div>
         <div class="container">
             <div class="row justify-content">
                 <div class="col-md-12 text-center mb-5">
