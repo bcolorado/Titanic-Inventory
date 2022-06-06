@@ -1,9 +1,11 @@
 package com.titanicos.TitanicInventory.controller;
 
 import com.titanicos.TitanicInventory.model.LogEvent;
+import com.titanicos.TitanicInventory.model.Products;
 import com.titanicos.TitanicInventory.model.Sales;
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.LogRepository;
+import com.titanicos.TitanicInventory.repositories.ProductRepository;
 import com.titanicos.TitanicInventory.repositories.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class SalesController {
@@ -26,7 +29,8 @@ public class SalesController {
 
     @Autowired
     SaleRepository saleRepo;
-
+    @Autowired
+    ProductRepository ProductRepo;
     @RequestMapping("/admin_sales")
     public String Admin_users(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
 
@@ -60,7 +64,9 @@ public class SalesController {
         }else if (userAcc.getRol().equals("administrador")) {
             //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
-            return "admin_new_products";
+            Products[] listaProductos = ProductRepo.findProductsByActive(true).toArray(new Products[0]);
+            model.addAttribute("productos",listaProductos);
+            return "admin_new_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";
@@ -71,8 +77,8 @@ public class SalesController {
     public String New_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
                               final Model model,
                               @RequestParam("new_id_sale") String id_sale,
-                              @RequestParam("new_date") Date timestamp,
-                              @RequestParam("new_quantity") int quantity,
+                              //@RequestParam("new_quantity") int[] quantity,
+                              @RequestParam("new_selected") String products,
                               HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -81,8 +87,11 @@ public class SalesController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
+            //System.out.println(quantity);
+            System.out.println(products);
+            String [] ProductString = products.split(",");
             String ip = request.getRemoteAddr();
-            CreateSale(id_sale,timestamp,quantity,userAcc.getId(),ip);
+            CreateSale(id_sale,ProductString,userAcc.getId(),ip);
             return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -90,7 +99,7 @@ public class SalesController {
         }
     }
 
-    public boolean CreateSale(String id_sale, Date timestamp, int quantity, String author, String ip)  {
+    public boolean CreateSale(String id_sale,String[] products, String author, String ip)  {
         try {
             Sales test = saleRepo.findProductByID(id_sale);
             if ((id_sale.equals(""))) {
@@ -98,7 +107,12 @@ public class SalesController {
                 return false;
             }else {
                 if (test == null) {
-                    Sales sale = new Sales(id_sale,timestamp,quantity);
+                    int quantify =10;
+                    Sales sale = new Sales(id_sale,author,quantify);
+                    for (String x : products){
+                        Products p1 = ProductRepo.findProductByID(x);
+                        sale.addProduct(p1);
+                    }
                     saleRepo.save(sale);
                     logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
                     //System.out.println("Created product:");
@@ -110,7 +124,7 @@ public class SalesController {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to create product.");
+            System.out.println(e.toString());
             return false;
         }
     }
