@@ -59,7 +59,7 @@ public class InicioController {
                 return "redirect:"+"admin";
             }else if (loggedAcc.getRol().equals("vendedor")){
                 System.out.println("logged in:"+user+" as seller");
-                //return "redirect:"+"home_seller"; // para cuando este home de vendedor
+                //return "redirect:"+"seller"; // para cuando este home de vendedor
                 return "redirect:"+"user";
             }else {
                 System.out.println("logged in:"+user+" with wrong role");

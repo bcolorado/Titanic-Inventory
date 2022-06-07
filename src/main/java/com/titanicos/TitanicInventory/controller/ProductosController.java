@@ -60,7 +60,6 @@ public class ProductosController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
-            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
             return "admin_new_products";
         }else {
