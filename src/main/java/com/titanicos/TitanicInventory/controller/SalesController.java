@@ -77,7 +77,6 @@ public class SalesController {
     @RequestMapping("/admin_new_sales")
     public String New_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
                               final Model model,
-                              @RequestParam("new_id_sale") String id_sale,
                               @RequestParam("new_quantity") List<Integer> quantity,
                               @RequestParam("new_selected") List<String> products,
                               HttpServletRequest request) {
@@ -93,7 +92,7 @@ public class SalesController {
             //String [] ProductString = products.split(",");
             while(quantity.remove(null));
             String ip = request.getRemoteAddr();
-            CreateSale(id_sale,products,quantity,userAcc.getId(),ip);
+            CreateSale(products,quantity,userAcc.getId(),ip);
             return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -101,36 +100,25 @@ public class SalesController {
         }
     }
 
-    public boolean CreateSale(String id_sale,List<String> products,List<Integer> quantitys, String author, String ip)  {
+    public boolean CreateSale(List<String> products,List<Integer> quantitys, String author, String ip)  {
         try {
-            Sales test = saleRepo.findProductByID(id_sale);
-            if ((id_sale.equals(""))) {
-                System.out.println("id input is empty");
-                return false;
-            }else {
-                if (test == null) {
-                    int quantity =0;
-                    Sales sale = new Sales(id_sale,author,quantity);
-                    for (int i=0;i<products.size();i++){
-                        if(products.get(i)!=null && quantitys.get(i)!=null){
-                            Products p1 = ProductRepo.findProductByID(products.get(i));
-                            p1.setCantidad(quantitys.get(i));
-                            sale.addProduct(p1);
-                            quantity+=p1.getCantidad()*p1.getPrecio();
-                        }
-
-                    }
-                    sale.setQuantity(quantity);
-                    saleRepo.save(sale);
-                    logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
-                    //System.out.println("Created product:");
-                    //System.out.println(newAcc.toString());
-                    return true;
-                } else {
-                    System.out.println("Sale already exists.");
-                    return false;
-                }
+            int total =0;
+            Sales sale = new Sales(author,total);
+            for (int i=0;i<products.size();i++){
+                Products p1 = ProductRepo.findProductByID(products.get(i));
+                p1.setCantidad(p1.getCantidad()-quantitys.get(i));
+                ProductRepo.save(p1);
+                p1.setCantidad(quantitys.get(i));
+                sale.addProduct(p1);
+                total+=p1.getCantidad()*p1.getPrecio();
             }
+            sale.setQuantity(total);
+            saleRepo.save(sale);
+            logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
+            //System.out.println("Created product:");
+            //System.out.println(newAcc.toString());
+            return true;
+
         } catch (Exception e) {
             System.out.println(e.toString());
             return false;
@@ -229,20 +217,6 @@ public class SalesController {
                 return false;
             }else {
                 String changes = new String();
-                if (!sale.getId_sale().equals(id_sale)){
-                    String oldName = sale.getId_sale();
-                    sale.setId_sale(id_sale);
-                    changes += "[ID: " + oldName + " > " + id_sale + "]";
-                }else {
-                    changes += "";
-                }
-                if (sale.getTimestamp()!=timestamp){
-                    Date oldTimesatamp = sale.getTimestamp();
-                    sale.setTimestamp(timestamp);
-                    changes += "[TIMESTAMP: " + oldTimesatamp + " > " + timestamp + "]";
-                }else {
-                    changes += "";
-                }
                 if (sale.getQuantity()!=quantity){
                     int oldQuantity = sale.getQuantity();
                     sale.setQuantity(quantity);
