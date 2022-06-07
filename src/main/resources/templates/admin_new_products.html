@@ -49,6 +49,8 @@
             </a>
         </div>
 
+        <br/><br/><br/>
+
         <div class="container">
             <h3>Nuevo Producto</h3>
             <form class="new_user-form" method="POST" modelAttribute="User">
@@ -65,10 +67,11 @@
                     <label class="form-control-placeholder">Cantidad</label>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Crear producto</button>
+                    <button type="submit" class="form-control btn btn-info rounded submit px-3">Crear producto</button>
                 </div>
                 <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
             </form>
+            <a th:href="@{admin_products}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>
         </div>
     </div>
 </div>

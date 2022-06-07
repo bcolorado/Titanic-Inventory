@@ -49,6 +49,8 @@
             </a>
         </div>
 
+        <br/><br/><br/>
+
         <div class="container">
             <h3 th:text="${productToEdit.id_name}"></h3>
             <form th:action="@{edit_products(id=${productToEdit.id_name})}" class="edit_product-form" method="POST" modelAttribute="productToEdit">
@@ -61,16 +63,16 @@
                     <label class="form-control-placeholder">Cantidad</label>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Guardar cambios</button>
+                    <button type="submit" class="form-control btn btn-info rounded submit px-3">Guardar cambios</button>
                 </div>
                 <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
             </form>
             <form th:action="@{delete_products(id=${productToEdit.id_name})}" role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
                   method="POST" modelAttribute="productToEdit">
-                <button class="form-control btn btn-primary rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar producto ${productToEdit.id_name}?|"
+                <button class="form-control btn btn-danger rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar producto ${productToEdit.id_name}?|"
                         onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Borrar producto</button>
             </form>
-            <a th:href="@{admin_products}" class="form-control btn btn-primary rounded submit px-3">Cancelar</a>
+            <a th:href="@{admin_products}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>
         </div>
     </div>
 </div>
