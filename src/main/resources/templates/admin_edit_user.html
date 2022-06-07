@@ -25,6 +25,9 @@
                 <li>
                     <a th:href="@{admin_products}">Productos</a>
                 </li>
+                <li>
+                    <a th:href="@{admin_sales}">Ventas</a>
+                </li>
             </ul>
 
             <div class="footer">
@@ -66,7 +69,7 @@
                     <select name='new_rol'>
                         <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}" th:selected="${rol==userToEdit.rol}"></option>
                     </select>
-                    <label class="form-control-placeholder">Rol</label>
+                    <br/><label class="form-control-placeholder">Rol</label>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="form-control btn btn-info rounded submit px-3">Guardar cambios</button>

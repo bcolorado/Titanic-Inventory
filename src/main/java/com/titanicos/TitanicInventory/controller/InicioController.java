@@ -55,14 +55,10 @@ public class InicioController {
             model.addAttribute("logged_user",loggedAcc);
             logRepo.save(new LogEvent("USER LOGIN",user,ip));
             if (loggedAcc.getRol().equals("administrador")) {
-                System.out.println("logged in:"+user+" as admin");
                 return "redirect:"+"admin";
             }else if (loggedAcc.getRol().equals("vendedor")){
-                System.out.println("logged in:"+user+" as seller");
-                //return "redirect:"+"seller"; // para cuando este home de vendedor
                 return "redirect:"+"user";
             }else {
-                System.out.println("logged in:"+user+" with wrong role");
                 return "login";
             }
 
@@ -83,14 +79,11 @@ public class InicioController {
     // Verifies if user and password match to an active user in the database, returns 0 if user don´t exist, 1 if login was succesful, -1 if wrong password
 
     int LogIn(String user, String password, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        System.out.println("Getting " + user + " info...");
         User loginUser = userRepo.findUserByID(user);
-        //System.out.println(loginUser.getActive());
         if (loginUser == null) {
             logRepo.save(new LogEvent("LOGIN ATTEMPT - USER DOESN'T EXIST",user,ip));
             return 0;
         } else if (!loginUser.getActive()) {
-            //System.out.println("User is inactive...");
             logRepo.save(new LogEvent("LOGIN ATTEMPT - Log-IN with inactive acc",user,ip));
             return 0;
         } else {

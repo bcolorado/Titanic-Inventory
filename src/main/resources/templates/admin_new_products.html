@@ -25,6 +25,9 @@
                 <li class="active">
                     <a th:href="@{admin_products}">Productos</a>
                 </li>
+                <li>
+                    <a th:href="@{admin_sales}">Ventas</a>
+                </li>
             </ul>
 
             <div class="footer">
@@ -53,6 +56,9 @@
 
         <div class="container">
             <h3>Nuevo Producto</h3>
+
+            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+
             <form class="new_user-form" method="POST" modelAttribute="User">
                 <div class="form-group mt-3">
                     <input name="new_product" type="text" class="form-control" required>

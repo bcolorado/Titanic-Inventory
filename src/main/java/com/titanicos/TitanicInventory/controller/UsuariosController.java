@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -60,6 +61,7 @@ public class UsuariosController {
                            @RequestParam("new_password") String password,
                            @RequestParam("new_name") String name,
                            @RequestParam("new_rol") String rol,
+                           RedirectAttributes redirAttrs,
                            HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -69,7 +71,16 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            CreateUser(user,password,name,rol,userAcc.getId(),ip);return "redirect:"+"admin_users";
+            int respuesta = CreateUser(user,password,name,rol,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Falta llenar información");
+                return "redirect:"+"admin_new_user";
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "El usuario ya existe");
+            } else if (respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "No fue posible crear el usuario");
+            }
+            return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -86,7 +97,6 @@ public class UsuariosController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
-            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
             return "admin_new_user";
         }else {
@@ -182,12 +192,12 @@ public class UsuariosController {
         return hash;
     }
 
-    public boolean CreateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public int CreateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             User test = userRepo.findUserByID(user);
             if ((user.equals(""))||(password.equals(""))||(name.equals(""))||(rol.equals(""))) {
                 System.out.println("One or more input values empty.");
-                return false;
+                return 0;
             }else {
                 if (test == null || !test.getActive()) {
                     byte[] salt = new byte[16];
@@ -198,15 +208,15 @@ public class UsuariosController {
                     logRepo.save(new LogEvent("ACCOUNT "+user+" CREATED", author, ip));
                     System.out.println("Created account:");
                     System.out.println(newAcc.toString());
-                    return true;
+                    return 1;
                 } else {
                     System.out.println("Account already exists.");
-                    return false;
+                    return -1;
                 }
             }
         } catch (Exception e) {
             System.out.println("Failed to create account.");
-            return false;
+            return -2;
         }
     }
 
@@ -244,7 +254,7 @@ public class UsuariosController {
                 System.out.println(acc.toString());
                 return true;
             }else {
-                String changes = new String();
+                String changes = "";
                 if (!acc.getName().equals(name)){
                     String oldName = acc.getName();
                     acc.setName(name);
