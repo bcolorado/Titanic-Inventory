@@ -12,7 +12,7 @@ import java.util.List;
 public class Sales {
 
     @Id
-    private String id_sale;
+    private String _id;
     private String id_vendedor;
     private List<Products> products;
     private Date timestamp;
@@ -20,8 +20,8 @@ public class Sales {
     private boolean active;
 
     //Constructor
-    public Sales(String id_sale,String id_vendedor, int quantity) {
-        this.id_sale = id_sale;
+    public Sales(String id_vendedor, int quantity) {
+        //this.id_sale = id_sale;
         this.id_vendedor = id_vendedor;
         this.products = new ArrayList<>();
         this.timestamp = new Date();
@@ -30,14 +30,7 @@ public class Sales {
     }
 
     //getters and setters
-    public String getId_sale() {
-        return id_sale;
-    }
-
-    public void setId_sale(String id_sale) {
-        this.id_sale = id_sale;
-    }
-
+    public String get_id(){return _id;}
     public String getId_vendedor() {
         return id_vendedor;
     }
@@ -75,7 +68,6 @@ public class Sales {
     @Override
     public String toString() {
         return "Sales{" +
-                "id_sale='" + id_sale + '\'' +
                 "id_vendedor='" + id_vendedor + '\'' +
                 ", timestamp=" + timestamp +
                 ", quantity=" + quantity +

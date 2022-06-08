@@ -80,11 +80,11 @@
               </thead>
               <tbody>
               <tr th:each="sale:${sales}">
-                <th scope="row" th:text="${sale.id_sale}"></th>
+                <th scope="row" th:text="${sale.get_id()}"></th>
                 <td th:text="${sale.id_vendedor}"></td>
                 <td th:text="${sale.timestamp}"></td>
                 <td th:number="${sale.quantity}"></td>
-                <td><a th:href="@{edit_sales(id=${sale.id_sale})}" class="btn btn-success">Editar</a></td>
+                <td><a th:href="@{edit_sales(id=${sale.get_id()})}" class="btn btn-success">Editar</a></td>
               </tr>
               </tbody>
             </table>

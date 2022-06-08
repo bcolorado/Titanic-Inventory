@@ -57,7 +57,7 @@ public class InicioController {
             if (loggedAcc.getRol().equals("administrador")) {
                 return "redirect:"+"admin";
             }else if (loggedAcc.getRol().equals("vendedor")){
-                return "redirect:"+"user";
+                return "redirect:"+"seller";
             }else {
                 return "login";
             }
