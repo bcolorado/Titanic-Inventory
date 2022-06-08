@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
@@ -80,6 +81,7 @@ public class SalesController {
                               @RequestParam("new_id_sale") String id_sale,
                               @RequestParam("new_quantity") List<Integer> quantity,
                               @RequestParam("new_selected") List<String> products,
+                              RedirectAttributes redirAttrs,
                               HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -93,7 +95,15 @@ public class SalesController {
             //String [] ProductString = products.split(",");
             while(quantity.remove(null));
             String ip = request.getRemoteAddr();
-            CreateSale(id_sale,products,quantity,userAcc.getId(),ip);
+            int respuesta = CreateSale(id_sale,products,quantity,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Es necesario un ID");
+                return "redirect:"+"admin_new_sales";
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "Ya existe la venta");
+            } else if (respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "No se pudo crear la venta");
+            }
             return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -101,15 +111,15 @@ public class SalesController {
         }
     }
 
-    public boolean CreateSale(String id_sale,List<String> products,List<Integer> quantitys, String author, String ip)  {
+    public int CreateSale(String id_sale,List<String> products,List<Integer> quantitys, String author, String ip)  {
         try {
             Sales test = saleRepo.findProductByID(id_sale);
             if ((id_sale.equals(""))) {
                 System.out.println("id input is empty");
-                return false;
+                return 0;
             }else {
                 if (test == null) {
-                    int quantity =0;
+                    int quantity = 0;
                     Sales sale = new Sales(id_sale,author,quantity);
                     for (int i=0;i<products.size();i++){
                         if(products.get(i)!=null && quantitys.get(i)!=null){
@@ -123,17 +133,15 @@ public class SalesController {
                     sale.setQuantity(quantity);
                     saleRepo.save(sale);
                     logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
-                    //System.out.println("Created product:");
-                    //System.out.println(newAcc.toString());
-                    return true;
+                    return 1;
                 } else {
                     System.out.println("Sale already exists.");
-                    return false;
+                    return -1;
                 }
             }
         } catch (Exception e) {
             System.out.println(e.toString());
-            return false;
+            return -2;
         }
     }
 
@@ -165,6 +173,7 @@ public class SalesController {
                                 final Model model,
                                 @RequestParam("new_date") Date timestamp,
                                 @RequestParam("new_quantity") int quantity,
+                                RedirectAttributes redirAttrs,
                                 HttpServletRequest request)  {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -174,7 +183,13 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            UpdateSale(edit_id,timestamp,quantity,userAcc.getId(),ip);
+            int respuesta = UpdateSale(edit_id,timestamp,quantity,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Es necesario un ID");
+                return "redirect:"+"admin_new_sales";
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "No fue posible editar la venta");
+            }
             return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -186,6 +201,7 @@ public class SalesController {
     public String Delete_Sale(@RequestParam("id") String edit_id,
                                  @SessionAttribute(required=false,name="logged_user") User userAcc,
                                  final Model model,
+                                 RedirectAttributes redirAttrs,
                                  HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -195,7 +211,12 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            DeleteSale(edit_id,userAcc.getId(),ip);
+            int respuesta = DeleteSale(edit_id,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "La venta no existe");
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "No fue posible borrar la venta");
+            }
             return "redirect:"+"admin_products";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -203,30 +224,30 @@ public class SalesController {
         }
     }
 
-    public boolean DeleteSale(String id_sale, String author, String ip) {
+    public int DeleteSale(String id_sale, String author, String ip) {
         try {
             Sales test = saleRepo.findProductByID(id_sale);
             if (test == null || !test.isActive()) {
                 System.out.println("Sale doesn't exist.");
-                return false;
+                return 0;
             }else {
                 test.setActive(false);
                 saleRepo.save(test);
                 logRepo.save(new LogEvent("PRODUCT "+id_sale+" DELETED", author, ip));
-                return true;
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Failed to delete sale.");
-            return false;
+            return -1;
         }
     }
 
-    public boolean UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) {
+    public int UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) {
         try {
             Sales sale = saleRepo.findProductByID(id_sale);
             if ((id_sale.equals(""))) {
                 System.out.println("id input is empty");
-                return false;
+                return 0;
             }else {
                 String changes = new String();
                 if (!sale.getId_sale().equals(id_sale)){
@@ -257,11 +278,11 @@ public class SalesController {
                 logRepo.save(new LogEvent("SALE "+sale+" UPDATED: " + changes, author, ip));
                 System.out.println("Sale updated:");
                 System.out.println(sale.toString());
-                return true;
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Failed to update sale.");
-            return false;
+            return -1;
         }
     }
 
