@@ -14,16 +14,10 @@
 <div class="wrapper d-flex align-items-stretch">
   <nav id="sidebar">
     <div class="p-4 pt-5">
-      <a class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
+      <a href="#" class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
       <ul class="list-unstyled components mb-5">
-        <li class="active">
-          <a th:href="@{admin}">Inicio</a>
-        </li>
         <li>
-          <a th:href="@{admin_users}">Usuarios</a>
-        </li>
-        <li>
-          <a th:href="@{admin_products}">Productos</a>
+          <a th:href="@{seller}">Inicio</a>
         </li>
       </ul>
 
@@ -39,21 +33,62 @@
   <!-- Page Content  -->
   <div id="content" class="p-4">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <button type="button" id="sidebarCollapse" class="btn btn-primary">
-          <i class="fa fa-bars"></i>
-          <span class="sr-only">Toggle Menu</span>
-        </button>
-        <button type="button" id="CerrarSesion" class="btn float-right">
-          Cerrar sesión
-        </button>
-      </div>
-    </nav>
+    <div class="container-fluid">
+      <button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+        <i class="fa fa-bars"></i>
+        <span class="sr-only">Toggle Menu</span>
+      </button>
+      <a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+        Cerrar sesión
+      </a>
+    </div>
 
-    <h2 class="mb-4">Página principal vendedor</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <br/><br/><br/>
+
+    <div class="container">
+      <h3>Nueva Venta</h3>
+      <form class="new_user-form" method="POST" modelAttribute="User">
+        <div class="form-group mt-3">
+          <input name="new_id_sale" type="text" class="form-control" required>
+          <label class="form-control-placeholder">ID venta</label>
+        </div>
+        <div class="form-group mt-3">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-wrap">
+                <table class="table table-striped">
+                  <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Añadir</th>
+                    <!--<th>Estado</th>-->
+                    <th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="product:${productos}">
+                    <th scope="row" th:text="${product.id_name}"></th>
+                    <td th:text="${product.precio}"></td>
+                    <td>
+                      <input name="new_quantity" type="number" min="0" th:max="${product.cantidad}" class="form-control">
+                    </td>
+                    <td><input name="new_selected" type="checkbox" th:value="${product.id_name}" ></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="form-control btn btn-info rounded submit px-3">Crear producto</button>
+        </div>
+        <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+      </form>
+      <a th:href="@{admin_sales}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>
+    </div>
   </div>
 </div>
 

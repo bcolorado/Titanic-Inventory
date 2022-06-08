@@ -76,11 +76,11 @@ public class SalesController {
 
     @RequestMapping("/admin_new_sales")
     public String New_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
-                              final Model model,
-                              @RequestParam("new_id_sale") String id_sale,
-                              @RequestParam("new_quantity") List<Integer> quantity,
-                              @RequestParam("new_selected") List<String> products,
-                              HttpServletRequest request) {
+                           final Model model,
+                           @RequestParam("new_id_sale") String id_sale,
+                           @RequestParam("new_quantity") List<Integer> quantity,
+                           @RequestParam("new_selected") List<String> products,
+                           HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
@@ -134,6 +134,52 @@ public class SalesController {
         } catch (Exception e) {
             System.out.println(e.toString());
             return false;
+        }
+    }
+
+    @GetMapping("/seller")
+    public String seller_sale(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
+        System.out.println("NEW SALE FORM 2!");
+        if (userAcc == null || userAcc.getRol() == null){
+            System.out.println("Not logged in, redirecting...");
+            return "redirect:";
+        }else if (userAcc.getRol().equals("vendedor")) {
+            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
+            model.addAttribute("logged_user", userAcc);
+            Products[] listaProductos = ProductRepo.findProductsByActive(true).toArray(new Products[0]);
+            model.addAttribute("productos",listaProductos);
+            return "seller";
+        }else if (userAcc.getRol().equals("administrador")) {
+            return "redirect:";
+        }else {
+            System.out.println("Wrong role, redirecting...");
+            return "redirect:";
+        }
+    }
+
+    @RequestMapping("/seller")
+    public String seller_new_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
+                           final Model model,
+                           @RequestParam("new_id_sale") String id_sale,
+                           @RequestParam("new_quantity") List<Integer> quantity,
+                           @RequestParam("new_selected") List<String> products,
+                           HttpServletRequest request) {
+        if (userAcc == null || userAcc.getRol() == null){
+            System.out.println("Not logged in, redirecting...");
+            return "redirect:" + "";
+        }else if (userAcc.getRol().equals("vendedor")) {
+            System.out.println(quantity);
+            System.out.println(products);
+            //String [] ProductString = products.split(",");
+            while(quantity.remove(null));
+            String ip = request.getRemoteAddr();
+            CreateSale(id_sale,products,quantity,userAcc.getId(),ip);
+            return "redirect:" + "seller";
+        }else if (userAcc.getRol().equals("administrador")) {
+            return "redirect:"+"";
+        }else {
+            System.out.println("Wrong role, redirecting...");
+            return "redirect:" + "";
         }
     }
 
