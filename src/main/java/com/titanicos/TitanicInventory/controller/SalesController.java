@@ -79,7 +79,6 @@ public class SalesController {
     public String New_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
                               final Model model,
                               @RequestParam("new_quantity") List<Integer> quantity,
-                              @RequestParam("new_selected") List<String> products,
                               RedirectAttributes redirAttrs,
                               HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
@@ -90,12 +89,14 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             System.out.println(quantity);
-            System.out.println(products);
             //String [] ProductString = products.split(",");
-            while(quantity.remove(null));
+            List<Products> products = ProductRepo.findProductsByActive(true);
             String ip = request.getRemoteAddr();
             int respuesta = CreateSale(products,quantity,userAcc.getId(),ip);
             if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Debe elegir al menos un producto");
+                return "redirect:"+"admin_new_sales";
+            } else if (respuesta == -1) {
                 redirAttrs.addFlashAttribute("error", "No se pudo crear la venta");
                 return "redirect:"+"admin_new_sales";
             }
@@ -106,29 +107,33 @@ public class SalesController {
         }
     }
 
-    public int CreateSale(List<String> products,List<Integer> quantitys, String author, String ip)  {
+    public int CreateSale(List<Products> products,List<Integer> quantitys, String author, String ip)  {
         try {
+            int validation = 0;
             int total = 0;
             Sales sale = new Sales(author,total);
             for (int i=0;i<products.size();i++){
-                Products p1 = ProductRepo.findProductByID(products.get(i));
-                p1.setCantidad(p1.getCantidad()-quantitys.get(i));
-                ProductRepo.save(p1);
-                p1.setCantidad(quantitys.get(i));
-                p1.setSubtotal(quantitys.get(i)*p1.getPrecio());
-                sale.addProduct(p1);
-                total+=p1.getCantidad()*p1.getPrecio();
+                if(quantitys.get(i)!=0) {
+                    Products p1 = products.get(i);
+                    p1.setCantidad(p1.getCantidad() - quantitys.get(i));
+                    ProductRepo.save(p1);
+                    p1.setCantidad(quantitys.get(i));
+                    p1.setSubtotal(quantitys.get(i) * p1.getPrecio());
+                    sale.addProduct(p1);
+                    total += p1.getCantidad() * p1.getPrecio();
+                    validation+=1;
+                }
             }
             sale.setQuantity(total);
             saleRepo.save(sale);
             logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
             //System.out.println("Created product:");
             //System.out.println(newAcc.toString());
-            return 1;
+            return validation;
 
         } catch (Exception e) {
             System.out.println(e.toString());
-            return 0;
+            return -1;
         }
     }
 
@@ -156,18 +161,26 @@ public class SalesController {
     public String seller_new_sale(@SessionAttribute(required=false,name="logged_user") User userAcc,
                            final Model model,
                            @RequestParam("new_quantity") List<Integer> quantity,
-                           @RequestParam("new_selected") List<String> products,
+                           RedirectAttributes redirAttrs,
                            HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
             System.out.println(quantity);
-            System.out.println(products);
+            //System.out.println(products);
             //String [] ProductString = products.split(",");
-            while(quantity.remove(null));
+            //while(quantity.remove(null));
             String ip = request.getRemoteAddr();
-            CreateSale(products,quantity,userAcc.getId(),ip);
+            List<Products> products = ProductRepo.findProductsByActive(true);
+            int respuesta = CreateSale(products,quantity,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Debe elegir al menos un producto");
+                return "redirect:"+"seller";
+            } else if (respuesta == -1) {
+                redirAttrs.addFlashAttribute("error", "No se pudo crear la venta");
+                return "redirect:"+"seller";
+            }
             return "redirect:" + "seller";
         }else if (userAcc.getRol().equals("administrador")) {
             return "redirect:"+"";
