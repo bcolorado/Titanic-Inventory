@@ -13,6 +13,10 @@ public class Products {
         this.active=true;
     }
 
+    public int getSubtotal() {
+        return Subtotal;
+    }
+    public void setSubtotal(int subtotal){this.Subtotal=subtotal;}
     public String getId_name() {
         return id_name;
     }
@@ -48,7 +52,7 @@ public class Products {
 
     @Id
     private String id_name;
-
+    private int Subtotal;
     private int precio;
     private int cantidad;
 

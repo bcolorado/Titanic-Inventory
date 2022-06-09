@@ -115,6 +115,7 @@ public class SalesController {
                 p1.setCantidad(p1.getCantidad()-quantitys.get(i));
                 ProductRepo.save(p1);
                 p1.setCantidad(quantitys.get(i));
+                p1.setSubtotal(quantitys.get(i)*p1.getPrecio());
                 sale.addProduct(p1);
                 total+=p1.getCantidad()*p1.getPrecio();
             }
