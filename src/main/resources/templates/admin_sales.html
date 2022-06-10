@@ -64,6 +64,7 @@
       </div>
 
       <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+      <div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
 
       <div class="row">
         <div class="col-md-12">
@@ -84,7 +85,7 @@
                 <th scope="row" th:text="${sale.get_id()}"></th>
                 <td th:text="${sale.id_vendedor}"></td>
                 <td th:text="${sale.timestamp}"></td>
-                <td th:number="${sale.quantity}"></td>
+                <td th:text="${sale.total}"></td>
                 <td><a th:href="@{edit_sales(id=${sale.get_id()})}" class="btn btn-success">Editar</a></td>
               </tr>
               </tbody>

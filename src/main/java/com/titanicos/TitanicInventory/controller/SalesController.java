@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +44,11 @@ public class SalesController {
         }else if (userAcc.getRol().equals("administrador")) {
 
             Sales[] listaSales = saleRepo.findProductsByActive(true).toArray(new Sales[0]);
+            for (Sales sale : listaSales
+                 ) {
+                System.out.println(sale.toString());
+
+            }
             model.addAttribute("sales",listaSales);
 
             return "admin_sales";
@@ -99,6 +103,8 @@ public class SalesController {
             } else if (respuesta == -1) {
                 redirAttrs.addFlashAttribute("error", "No se pudo crear la venta");
                 return "redirect:"+"admin_new_sales";
+            } else if (respuesta >= 1) {
+                redirAttrs.addFlashAttribute("success", "Venta creada");
             }
             return "redirect:"+"admin_sales";
         }else {
@@ -124,7 +130,10 @@ public class SalesController {
                     validation+=1;
                 }
             }
-            sale.setQuantity(total);
+            if(validation == 0){
+                return validation;
+            }
+            sale.setTotal(total);
             saleRepo.save(sale);
             logRepo.save(new LogEvent("SALE "+sale+" CREATED", author, ip));
             //System.out.println("Created product:");
@@ -168,18 +177,15 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
             System.out.println(quantity);
-            //System.out.println(products);
-            //String [] ProductString = products.split(",");
-            //while(quantity.remove(null));
             String ip = request.getRemoteAddr();
             List<Products> products = ProductRepo.findProductsByActive(true);
             int respuesta = CreateSale(products,quantity,userAcc.getId(),ip);
             if(respuesta == 0){
                 redirAttrs.addFlashAttribute("error", "Debe elegir al menos un producto");
-                return "redirect:"+"seller";
             } else if (respuesta == -1) {
                 redirAttrs.addFlashAttribute("error", "No se pudo crear la venta");
-                return "redirect:"+"seller";
+            } else if (respuesta >= 1) {
+                redirAttrs.addFlashAttribute("success", "Venta creada");
             }
             return "redirect:" + "seller";
         }else if (userAcc.getRol().equals("administrador")) {
@@ -212,7 +218,7 @@ public class SalesController {
         }
     }
 
-    @RequestMapping("/edit_sales")
+    @RequestMapping("/edit_sales") /* por ahora esto no hace nada */
     public String Edit_Sales(@RequestParam("id") String edit_id,
                                 @SessionAttribute(required=false,name="logged_user") User userAcc,
                                 final Model model,
@@ -287,7 +293,7 @@ public class SalesController {
         }
     }
 
-    public int UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) {
+    public int UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) { /* por ahora se usa */
         try {
             Sales sale = saleRepo.findProductByID(id_sale);
             if ((id_sale.equals(""))) {
@@ -295,9 +301,9 @@ public class SalesController {
                 return 0;
             }else {
                 String changes = new String();
-                if (sale.getQuantity()!=quantity){
-                    int oldQuantity = sale.getQuantity();
-                    sale.setQuantity(quantity);
+                if (sale.getTotal()!=quantity){
+                    int oldQuantity = sale.getTotal();
+                    sale.setTotal(quantity);
                     changes += "[CANTIDAD: " + oldQuantity + " > " + quantity + "]";
                 }else {
                     changes += "";

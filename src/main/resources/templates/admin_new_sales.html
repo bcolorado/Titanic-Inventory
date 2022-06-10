@@ -94,9 +94,10 @@
                 <div class="form-group">
                     <button type="submit" class="form-control btn btn-info rounded submit px-3">Crear Venta</button>
                 </div>
-                <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
             </form>
             <a th:href="@{admin_sales}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>
+            <br/>
+            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
         </div>
     </div>
 </div>
