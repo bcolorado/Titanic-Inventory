@@ -82,7 +82,8 @@
                     <td>
                       <input name="new_quantity" type="number" value="0" min="0" th:max="${product.cantidad}" class="form-control"
                              th:id="|cantidad${iterStat.index}|"
-                             th:oninput="|subtotal${iterStat.index}.value=parseInt(cantidad${iterStat.index}.value)*${product.precio};total.value=update_total(sub_totals)|">
+                             th:oninput="'validity.valid||(value=0);'+|subtotal${iterStat.index}.value=parseInt(cantidad${iterStat.index}.value)*${product.precio};total.value=update_total(sub_totals)|"
+                             required>
                     </td>
                     <td>
                       $<output th:name="|subtotal${iterStat.index}|" th:for="|cantidad${iterStat.index}|">0</output>
