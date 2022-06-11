@@ -80,7 +80,7 @@
                             <tbody>
                             <tr th:each="product:${productos}">
                                 <th scope="row" th:text="${product.id_name}"></th>
-                                <td th:text="${product.precio}"></td>
+                                <td th:text="'$'+${product.precio}"></td>
                                 <td th:text="${product.cantidad}"></td>
                                 <td><a th:href="@{edit_products(id=${product.id_name})}" class="btn btn-success">Editar</a></td>
                             </tr>

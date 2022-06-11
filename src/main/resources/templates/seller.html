@@ -70,20 +70,28 @@
                   <tbody>
                   <tr th:each="product,iterStat:${productos}">
                     <th scope="row" th:text="${product.id_name}"></th>
-                    <td th:text="${product.precio}"></td>
+                    <td th:text="'$'+${product.precio}"></td>
                     <td th:text="${product.cantidad}"></td>
                     <td>
                       <input name="new_quantity" type="number" value="0" min="0" th:max="${product.cantidad}" class="form-control"
                              th:id="|cantidad${iterStat.index}|"
-                             th:oninput="|subtotal${iterStat.index}.value=parseInt(cantidad${iterStat.index}.value)*${product.precio}|">
+                             th:oninput="|subtotal${iterStat.index}.value=parseInt(cantidad${iterStat.index}.value)*${product.precio};total.value=update_total(sub_totals)|">
                     </td>
                     <td>
-                      <output th:name="|subtotal${iterStat.index}|" th:for="|cantidad${iterStat.index}|">0</output>
+                      $<output th:name="|subtotal${iterStat.index}|" th:for="|cantidad${iterStat.index}|">0</output>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Total</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <strong>$<output name="total">0</output></strong>
                     </td>
                   </tr>
                   </tbody>
                 </table>
-
               </div>
             </div>
           </div>
@@ -102,5 +110,25 @@
 
 <script th:src="@{js/home_jquery.min.js}"></script>
 <script th:src="@{js/home_main.js}"></script>
+<script>
+//console.log("script loaded");
+var sub_totals = [];
+var outputs = document.getElementsByTagName("output");
+for(var i = 0; i < outputs.length; i++) {
+    if(outputs[i].name.indexOf('subtotal') == 0) {
+        sub_totals.push(outputs[i]);
+        //console.log(outputs[i]);
+    }
+}
+function update_total(subtotals) {
+  var total = 0;
+  for(var i = 0; i < subtotals.length; i++) {
+      //console.log(subtotals[i].value);
+      total += parseInt(subtotals[i].value);
+  }
+  //console.log(total)
+  return total;
+}
+</script>
 </body>
 </html>
