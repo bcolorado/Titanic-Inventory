@@ -64,20 +64,26 @@
                     <th>Inventario</th>
                     <th>Cantidad</th>
                     <!--<th>Estado</th>-->
-                    <th></th>
+                    <th>Subtotal</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr th:each="product:${productos}">
+                  <tr th:each="product,iterStat:${productos}">
                     <th scope="row" th:text="${product.id_name}"></th>
                     <td th:text="${product.precio}"></td>
                     <td th:text="${product.cantidad}"></td>
                     <td>
-                      <input name="new_quantity" type="number" value="0" min="0" th:max="${product.cantidad}" class="form-control">
+                      <input name="new_quantity" type="number" value="0" min="0" th:max="${product.cantidad}" class="form-control"
+                             th:id="|cantidad${iterStat.index}|"
+                             th:oninput="|subtotal${iterStat.index}.value=parseInt(cantidad${iterStat.index}.value)*${product.precio}|">
+                    </td>
+                    <td>
+                      <output th:name="|subtotal${iterStat.index}|" th:for="|cantidad${iterStat.index}|">0</output>
                     </td>
                   </tr>
                   </tbody>
                 </table>
+
               </div>
             </div>
           </div>
