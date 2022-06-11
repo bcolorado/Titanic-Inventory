@@ -46,7 +46,14 @@
     <br/><br/><br/>
 
     <div class="container">
-      <h3>Nueva Venta</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-12 text-center">
+          <h3 class="heading-section float-left">Nueva Venta</h3>
+          <input name="search" id="search-bar" type="text" oninput="filter_table(rows)" class="float-right">
+          <h5 class="float-right" style="margin-right: 0.5rem;">Filtrar productos</h5>
+        </div>
+      </div>
+
       <form class="new_user-form" method="POST" modelAttribute="User">
         <!--<div class="form-group mt-3">
             <input name="new_id_sale" type="text" class="form-control" required>
@@ -112,6 +119,7 @@
 <script th:src="@{js/home_main.js}"></script>
 <script>
 //console.log("script loaded");
+var rows = document.getElementsByTagName("tr");
 var sub_totals = [];
 var outputs = document.getElementsByTagName("output");
 for(var i = 0; i < outputs.length; i++) {
@@ -123,11 +131,35 @@ for(var i = 0; i < outputs.length; i++) {
 function update_total(subtotals) {
   var total = 0;
   for(var i = 0; i < subtotals.length; i++) {
-      //console.log(subtotals[i].value);
+      console.log(subtotals[i].value);
       total += parseInt(subtotals[i].value);
   }
-  //console.log(total)
+  ////console.log(total)
   return total;
+}
+function filter_table(rows) {
+  var search = document.getElementById('search-bar');
+  //console.log(rows);
+  for(var i = 0; i < rows.length; i++) {
+  	rows[i].style.display = "table-row";
+  }
+  for(var i = 0; i < rows.length-1; i++) {
+    if(i == 0) {
+		continue;
+    }
+    var name = rows[i].getElementsByTagName("th")[0].innerText.toLowerCase();
+    console.log(name);
+    console.log(search.value.toLowerCase());
+    if(name.indexOf(search.value.toLowerCase()) == -1) {
+    	//console.log('miss');
+        if (rows[i].style.display === "none") {
+          rows[i].style.display = "table-row";
+        } else {
+          rows[i].style.display = "none";
+        }
+    }
+  }
+  console.log(rows);
 }
 </script>
 </body>
