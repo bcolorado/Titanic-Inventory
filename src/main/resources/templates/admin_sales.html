@@ -86,7 +86,30 @@
                 <td th:text="${sale.id_vendedor}"></td>
                 <td th:text="${sale.timestamp}"></td>
                 <td th:text="'$'+${sale.total}"></td>
-                <td><a th:href="@{edit_sales(id=${sale.get_id()})}" class="btn btn-success">Editar</a></td>
+                <td><details>
+                  <summary>Ver detalles</summary>
+                  <ul th:each="product:${sale.getProducts()}">
+                    <li th:text="${product.id_name}"></li>
+                  </ul>
+                  <!--<table class="table subtable">
+                    <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Precio</th>
+                      <th>Cantidad</th>
+                      <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product:${sale.products}">
+                      <th th:text="product.id_name"></th>
+                      <td th:text="'$'+${product.precio}"></td>
+                      <td th:text="${product.cantidad}"></td>
+                      <td th:text="${product.Subtotal}"></td>
+                    </tr>
+                    </tbody>
+                  </table>-->
+                </details></td>
               </tr>
               </tbody>
             </table>

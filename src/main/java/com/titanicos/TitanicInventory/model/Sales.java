@@ -64,6 +64,7 @@ public class Sales {
     public void addProduct(Products product){
         this.products.add(product);
     }
+    public List<Products> getProducts(){return products;}
     //to  string
     @Override
     public String toString() {
