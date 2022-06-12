@@ -72,26 +72,26 @@
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>ID</th>
+                <th>No</th>
                 <th>Vendedor</th>
                 <th>Fecha y hora</th>
+                <th>Productos</th>
                 <th>Total</th>
                 <!--<th>Estado</th>-->
-                <th></th>
+
               </tr>
               </thead>
               <tbody>
-              <tr th:each="sale:${sales}">
-                <th scope="row" th:text="${sale.get_id()}"></th>
+              <tr th:each="sale, iterStat:${sales}">
+                <th scope="row" th:text="${iterStat.index}+1"></th>
                 <td th:text="${sale.id_vendedor}"></td>
                 <td th:text="${sale.timestamp}"></td>
-                <td th:text="'$'+${sale.total}"></td>
                 <td><details>
-                  <summary>Ver detalles</summary>
-                  <ul th:each="product:${sale.getProducts()}">
+                  <summary>Ver productos</summary>
+                  <!--<ul th:each="product:${sale.getProducts()}">
                     <li th:text="${product.id_name}"></li>
-                  </ul>
-                  <!--<table class="table subtable">
+                  </ul>-->
+                  <table class="table subtable">
                     <thead>
                     <tr>
                       <th>Producto</th>
@@ -101,15 +101,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="product:${sale.products}">
-                      <th th:text="product.id_name"></th>
+                    <tr th:each="product:${sale.getProducts()}">
+                      <th th:text="${product.id_name}"></th>
                       <td th:text="'$'+${product.precio}"></td>
                       <td th:text="${product.cantidad}"></td>
-                      <td th:text="${product.Subtotal}"></td>
+                      <td th:text="'$'+${product.Subtotal}"></td>
                     </tr>
                     </tbody>
-                  </table>-->
+                  </table>
                 </details></td>
+                <td th:text="'$'+${sale.total}"></td>
               </tr>
               </tbody>
             </table>
