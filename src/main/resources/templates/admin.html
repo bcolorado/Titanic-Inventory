@@ -1,18 +1,133 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>Sidebar 01</title>
+  	<title>TI Administrador</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="icon" th:href="@{/images/TitanicShip.ico}">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" th:href="@{css/style_home.css}">
+	  <!--Load the AJAX API-->
+	  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	  <script type="text/javascript" th:inline="javascript">
 
-        <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel="stylesheet" th:href="@{css/style_home.css}">
+		  // Load the Visualization API and the corechart package.
+		  google.charts.load('current', {'packages':['corechart']});
+
+		  // Set a callback to run when the Google Visualization API is loaded.
+		  google.charts.setOnLoadCallback(drawPieChart1);
+		  google.charts.setOnLoadCallback(drawScatterChart1);
+		  google.charts.setOnLoadCallback(drawColumn1);
+
+		  window.addEventListener("load", function() {
+			  window.dispatchEvent(new Event('resize'));
+		  });
+
+		  window.onresize = function() {
+			  drawPieChart1();
+			  drawScatterChart1();
+			  drawColumn1();
+		  }
+
+
+		  // Callback that creates and populates a data table,
+		  // instantiates the pie chart, passes in the data and
+		  // draws it.
+		  function drawPieChart1() {
+
+			  // Create the data table.
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string', 'Producto');
+			  data.addColumn('number', 'Ventas');
+			  data.addRows([[${chartData}]]);
+
+			  // Set chart options
+			  var options = {'title':'Productos vendidos',
+				  width: '100%',
+				  height: '100%',
+				  backgroundColor: '#FAFAFA'};
+
+			  // Instantiate and draw our chart, passing in some options.
+			  var chart = new google.visualization.PieChart(document.getElementById('pieChart1'));
+			  chart.draw(data, options);
+		  }
+
+		  function drawScatterChart1() {
+			  var data = google.visualization.arrayToDataTable([
+				  ['Age', 'Weight'],
+				  [ 8,      12],
+				  [ 4,      5.5],
+				  [ 11,     14],
+				  [ 4,      5],
+				  [ 3,      3.5],
+				  [ 6.5,    7]
+			  ]);
+
+			  var options = {
+				  title: 'Age vs. Weight comparison',
+				  hAxis: {title: 'Age', minValue: 0, maxValue: 15},
+				  vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
+				  legend: 'none',
+				  width: '100%',
+				  height: '100%',
+				  backgroundColor: '#FAFAFA'
+			  };
+
+			  var chart = new google.visualization.ScatterChart(document.getElementById('scatterChart1'));
+
+			  chart.draw(data, options);
+		  }
+
+		  function drawColumn1() {
+
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('timeofday', 'Time of Day');
+			  data.addColumn('number', 'Motivation Level');
+
+			  data.addRows([
+				  [{v: [8, 0, 0], f: '8 am'}, 1],
+				  [{v: [9, 0, 0], f: '9 am'}, 2],
+				  [{v: [10, 0, 0], f:'10 am'}, 3],
+				  [{v: [11, 0, 0], f: '11 am'}, 4],
+				  [{v: [12, 0, 0], f: '12 pm'}, 5],
+				  [{v: [13, 0, 0], f: '1 pm'}, 6],
+				  [{v: [14, 0, 0], f: '2 pm'}, 7],
+				  [{v: [15, 0, 0], f: '3 pm'}, 8],
+				  [{v: [16, 0, 0], f: '4 pm'}, 9],
+				  [{v: [17, 0, 0], f: '5 pm'}, 10],
+			  ]);
+
+			  var options = {
+				  title: 'Motivation Level Throughout the Day',
+				  hAxis: {
+					  title: 'Time of Day',
+					  format: 'h:mm a',
+					  viewWindow: {
+						  min: [7, 30, 0],
+						  max: [17, 30, 0]
+					  }
+				  },
+				  vAxis: {
+					  title: 'Rating'
+				  },
+				  width: '100%',
+				  height: '100%',
+				  backgroundColor: '#FAFAFA'
+			  };
+
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart1'));
+
+			  chart.draw(data, options);
+		  }
+
+
+	  </script>
   </head>
   <body>
 		
-		<div class="wrapper d-flex align-items-stretch">
-			<nav id="sidebar">
+	<div class="wrapper d-flex align-items-stretch">
+		<nav id="sidebar">
 				<div class="p-4 pt-5">
 		  		<a class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
 	        <ul class="list-unstyled components mb-5">
@@ -25,6 +140,9 @@
 	          <li>
               <a th:href="@{admin_products}">Productos</a>
 	          </li>
+				<li>
+					<a th:href="@{admin_sales}">Ventas</a>
+				</li>
 	        </ul>
 
 	        <div class="footer">
@@ -37,23 +155,44 @@
     	</nav>
 
         <!-- Page Content  -->
-      <div id="content" class="p-4">
+      	<div id="content" class="p-4">
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <div class="container-fluid">
+			<nav>
+			  <div class="container-fluid">
+				<button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+					<i class="fa fa-bars"></i>
+					<span class="sr-only">Toggle Menu</span>
+				</button>
+				<a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+					Cerrar sesión
+				</a>
+			  </div>
+			</nav>
 
-            <button type="button" id="sidebarCollapse" class="btn btn-primary">
-              <i class="fa fa-bars"></i>
-              <span class="sr-only">Toggle Menu</span>
-            </button>
-          </div>
-        </nav>
-
-        <h2 class="mb-4">Página principal</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      </div>
+			<br/><br/><br/>
+			<h2 class="mb-4">Página principal</h2>
+			<div class="row justify-content-start mb-4 ml-0">
+				<div class="col" style="border: 1px solid #8B8C89">
+					Número de vendedores<br/>###
+				</div>
+				<div class="col" style="border: 1px solid #8B8C89">
+					Número de ventas<br/>###
+				</div>
+				<div class="col" style="border: 1px solid #8B8C89">
+					Total de ingresos<br/>###
+				</div>
+			</div>
+			<div class="container">
+				<div class="row justify-content-start">
+					<div class="col" id="pieChart1" style="border: 1px solid #8B8C89"></div>
+					<div class="col" id="scatterChart1" style="border: 1px solid #8B8C89"></div>
+				</div>
+				<div class="row justify-content-start">
+					<div class="col" id="columnChart1" style="border: 1px solid #8B8C89"></div>
+				</div>
+			</div>
 		</div>
+	</div>
 
     <script th:src="@{js/home_jquery.min.js}"></script>
     <script th:src="@{js/home_main.js}"></script>

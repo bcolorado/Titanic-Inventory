@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
@@ -28,15 +29,12 @@ public class ProductosController {
     @Autowired
     ProductRepository ProductRepo;
 
-
     @RequestMapping("/admin_products")
     public String Admin_users(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
 
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
 
@@ -45,7 +43,6 @@ public class ProductosController {
 
             return "admin_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
@@ -53,19 +50,14 @@ public class ProductosController {
 
     @GetMapping("/admin_new_products")
     public String new_product(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
-        System.out.println("NEW PRODUCT FORM!");
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
-            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
             return "admin_new_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }
     }
@@ -77,46 +69,47 @@ public class ProductosController {
                            @RequestParam("new_product") String product,
                            @RequestParam("new_price") int price,
                            @RequestParam("new_quantity") int quantity,
+                           RedirectAttributes redirAttrs,
                            HttpServletRequest request) {
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            CreateProduct(product,price,quantity,userAcc.getId(),ip);
+            int respuesta = CreateProduct(product,price,quantity,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "No fue posible crear el producto");
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "El producto ya existe");
+            } else if(respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "No ha llenado el campo de nombre");
+                return "redirect:"+"admin_new_products";
+            }
             return "redirect:"+"admin_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
 
 
-    public boolean CreateProduct(String product, int price, int quantity, String author, String ip)  {
+    public int CreateProduct(String product, int price, int quantity, String author, String ip)  {
         try {
             Products test = ProductRepo.findProductByID(product);
             if ((product.equals(""))) {
-                System.out.println("Name input is empty");
-                return false;
+                return -2;
             }else {
                 if (test == null) {
                     Products producto=new Products(product,price,quantity);
                     ProductRepo.save(producto);
                     logRepo.save(new LogEvent("PRODUCT "+product+" CREATED", author, ip));
-                    //System.out.println("Created product:");
-                    //System.out.println(newAcc.toString());
-                    return true;
+                    return 1;
                 } else {
-                    System.out.println("Product already exists.");
-                    return false;
+                    return -1;
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to create product.");
-            return false;
+            return 0;
         }
     }
 
@@ -126,18 +119,14 @@ public class ProductosController {
                             final Model model){
 
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
-            System.out.println("EDIT USER FORM!");
             Products ProductToEdit = ProductRepo.findProductByID(edit_id);
             model.addAttribute("productToEdit", ProductToEdit);
             return "admin_edit_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
 
@@ -148,19 +137,24 @@ public class ProductosController {
                             final Model model,
                             @RequestParam("new_price") int price,
                             @RequestParam("new_quantity") int quantity,
+                            RedirectAttributes redirAttrs,
                             HttpServletRequest request)  {
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
             UpdateProduct(edit_id,price,quantity,userAcc.getId(),ip);
+            int respuesta = UpdateProduct(edit_id,price,quantity,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "No fue posible editar el producto");
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "No ha llenado el campo de nombre");
+                return "redirect:"+"admin_new_products";
+            }
             return "redirect:"+"admin_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
@@ -171,48 +165,45 @@ public class ProductosController {
                               final Model model,
                               HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
-            System.out.println("Not logged in, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("vendedor")) {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
             DeleteProduct(edit_id,userAcc.getId(),ip);
             return "redirect:"+"admin_products";
         }else {
-            System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
         }
     }
 
-    public boolean DeleteProduct(String product, String author, String ip) {
+    public int DeleteProduct(String product, String author, String ip) {
         try {
             Products test = ProductRepo.findProductByID(product);
             if (test == null || !test.isActive()) {
                 System.out.println("Product doesn't exist.");
-                return false;
+                return 0;
             }else {
                 test.setActive(false);
                 ProductRepo.save(test);
                 logRepo.save(new LogEvent("PRODUCT "+product+" DELETED", author, ip));
-                return true;
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Failed to delete product.");
-            return false;
+            return -1;
         }
     }
 
 
-    public boolean UpdateProduct(String product, int price, int quantity, String author, String ip) {
+    public int UpdateProduct(String product, int price, int quantity, String author, String ip) {
         try {
             Products producto = ProductRepo.findProductByID(product);
             if ((product.equals(""))) {
                 System.out.println("Name input is empty");
-                return false;
+                return -1;
             }else {
-                String changes = new String();
+                String changes = ""; //replaced new String()
                 if (!producto.getId_name().equals(product)){
                     String oldName = producto.getId_name();
                     producto.setId_name(product);
@@ -240,12 +231,12 @@ public class ProductosController {
                 ProductRepo.save(producto);
                 logRepo.save(new LogEvent("PRODUCT "+product+" UPDATED: " + changes, author, ip));
                 System.out.println("Product updated:");
-                System.out.println(producto.toString());
-                return true;
+                System.out.println(producto);
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Failed to update product.");
-            return false;
+            return 0;
         }
     }
 

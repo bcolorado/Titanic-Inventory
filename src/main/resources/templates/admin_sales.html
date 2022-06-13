@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Venta</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="icon" th:href="@{/images/TitanicShip.ico}">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" th:href="@{css/style_home.css}">
+</head>
+<body>
+
+<div class="wrapper d-flex align-items-stretch">
+  <nav id="sidebar">
+    <div class="p-4 pt-5">
+      <a href="#" class="img logo rounded-circle mb-5" th:style="'background-image: url(images/logo.png)'"></a>
+      <ul class="list-unstyled components mb-5">
+        <li>
+          <a th:href="@{admin}">Inicio</a>
+        </li>
+        <li>
+          <a th:href="@{admin_users}">Usuarios</a>
+        </li>
+        <li >
+          <a th:href="@{admin_products}">Productos</a>
+        </li>
+        <li class="active">
+          <a th:href="@{admin_sales}">Ventas</a>
+        </li>
+      </ul>
+
+      <div class="footer">
+        <p>
+          Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Titanic Inventory</a>
+          </p>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Page Content  -->
+  <div id="content" class="p-4">
+
+    <div class="container-fluid">
+      <button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+        <i class="fa fa-bars"></i>
+        <span class="sr-only">Toggle Menu</span>
+      </button>
+      <a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+        Cerrar sesión
+      </a>
+    </div>
+
+    <br/><br/><br/>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12 text-center mb-5">
+          <h2 class="heading-section float-left">Ventas</h2>
+          <a th:href="@{admin_new_sales}" class="btn btn-info float-right">Nuevo venta</a>
+        </div>
+      </div>
+
+      <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+      <div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-wrap">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>No</th>
+                <th>Vendedor</th>
+                <th>Fecha y hora</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <!--<th>Estado</th>-->
+
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="sale, iterStat:${sales}">
+                <th scope="row" th:text="${iterStat.index}+1"></th>
+                <td th:text="${sale.id_vendedor}"></td>
+                <td th:text="${sale.timestamp}"></td>
+                <td><details>
+                  <summary>Ver productos</summary>
+                  <!--<ul th:each="product:${sale.getProducts()}">
+                    <li th:text="${product.id_name}"></li>
+                  </ul>-->
+                  <table class="table subtable">
+                    <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Precio</th>
+                      <th>Cantidad</th>
+                      <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product:${sale.getProducts()}">
+                      <th th:text="${product.id_name}"></th>
+                      <td th:text="'$'+${product.precio}"></td>
+                      <td th:text="${product.cantidad}"></td>
+                      <td th:text="'$'+${product.Subtotal}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </details></td>
+                <td th:text="'$'+${sale.total}"></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{js/home_jquery.min.js}"></script>
+<script th:src="@{js/home_main.js}"></script>
+</body>
+</html>
