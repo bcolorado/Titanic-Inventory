@@ -44,11 +44,10 @@ public class SalesController {
         }else if (userAcc.getRol().equals("administrador")) {
 
             Sales[] listaSales = saleRepo.findProductsByActive(true).toArray(new Sales[0]);
-            for (Sales sale : listaSales
-                 ) {
-                System.out.println(sale.toString());
-
-            }
+//            for (Sales sale : listaSales
+//                 ) {
+//                System.out.println(sale.toString());
+//            }
             model.addAttribute("sales",listaSales);
 
             return "admin_sales";
