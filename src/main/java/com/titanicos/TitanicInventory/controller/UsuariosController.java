@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -60,6 +61,7 @@ public class UsuariosController {
                            @RequestParam("new_password") String password,
                            @RequestParam("new_name") String name,
                            @RequestParam("new_rol") String rol,
+                           RedirectAttributes redirAttrs,
                            HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -69,7 +71,16 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            CreateUser(user,password,name,rol,userAcc.getId(),ip);return "redirect:"+"admin_users";
+            int respuesta = CreateUser(user,password,name,rol,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "Falta llenar información");
+                return "redirect:"+"admin_new_user";
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "El usuario ya existe");
+            } else if (respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "No fue posible crear el usuario");
+            }
+            return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -86,7 +97,6 @@ public class UsuariosController {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
-            //System.out.println("en userAcc queda el objeto usuario que inicio sesion" + userAcc.toString());
             model.addAttribute("logged_user", userAcc);
             return "admin_new_user";
         }else {
@@ -128,6 +138,7 @@ public class UsuariosController {
                             @RequestParam("new_password") String password,
                             @RequestParam("new_name") String name,
                             @RequestParam("new_rol") String rol,
+                            RedirectAttributes redirAttrs,
                             HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -137,7 +148,15 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            UpdateUser(edit_id,password,name,rol,userAcc.getId(),ip);
+            int respuesta = UpdateUser(edit_id,password,name,rol,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "No se puede editar la cuenta del desarrollador");
+                return "redirect:"+"admin_edit_user";
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "Faltan datos");
+            } else if (respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "No fue posible actualizar el usuario");
+            }
             return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -148,7 +167,7 @@ public class UsuariosController {
     @RequestMapping("/delete_user")
     public String Delete_User(@RequestParam("id") String edit_id,
                             @SessionAttribute(required=false,name="logged_user") User userAcc,
-                            final Model model,
+                            final Model model, RedirectAttributes redirAttrs,
                             HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (userAcc == null || userAcc.getRol() == null){
             System.out.println("Not logged in, redirecting...");
@@ -158,7 +177,16 @@ public class UsuariosController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             String ip = request.getRemoteAddr();
-            DeleteUser(edit_id,userAcc.getId(),ip);
+            int respuesta = DeleteUser(edit_id,userAcc.getId(),ip);
+            if(respuesta == 0){
+                redirAttrs.addFlashAttribute("error", "No se puede borrar su cuenta");
+            } else if(respuesta == -1){
+                redirAttrs.addFlashAttribute("error", "No puede borrar la cuenta de desarrollador");
+            } else if (respuesta == -2){
+                redirAttrs.addFlashAttribute("error", "Usuario no existe");
+            } else if (respuesta == -3){
+                redirAttrs.addFlashAttribute("error", "No fue posible borrar la cuenta");
+            }
             return "redirect:"+"admin_users";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -182,12 +210,12 @@ public class UsuariosController {
         return hash;
     }
 
-    public boolean CreateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public int CreateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             User test = userRepo.findUserByID(user);
             if ((user.equals(""))||(password.equals(""))||(name.equals(""))||(rol.equals(""))) {
                 System.out.println("One or more input values empty.");
-                return false;
+                return 0;
             }else {
                 if (test == null || !test.getActive()) {
                     byte[] salt = new byte[16];
@@ -198,29 +226,29 @@ public class UsuariosController {
                     logRepo.save(new LogEvent("ACCOUNT "+user+" CREATED", author, ip));
                     System.out.println("Created account:");
                     System.out.println(newAcc.toString());
-                    return true;
+                    return 1;
                 } else {
                     System.out.println("Account already exists.");
-                    return false;
+                    return -1;
                 }
             }
         } catch (Exception e) {
             System.out.println("Failed to create account.");
-            return false;
+            return -2;
         }
     }
 
-    public boolean UpdateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public int UpdateUser(String user, String password, String name, String rol, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             User acc = userRepo.findUserByID(user);
             if(user.equals("developer")) {
                 System.out.println("Can't edit developer account.");
-                return false;
+                return 0;
             }else if ((user.equals(""))||(name.equals(""))||(rol.equals(""))) {
                 System.out.println("One or more input values empty.");
-                return false;
+                return -1;
             }else if (password.equals("")){
-                String changes = new String();
+                String changes = "";
                 if (!acc.getName().equals(name)){
                     String oldName = acc.getName();
                     acc.setName(name);
@@ -242,9 +270,9 @@ public class UsuariosController {
                 logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED > " + changes, author, ip));
                 System.out.println("Account updated:");
                 System.out.println(acc.toString());
-                return true;
+                return 1;
             }else {
-                String changes = new String();
+                String changes = "";
                 if (!acc.getName().equals(name)){
                     String oldName = acc.getName();
                     acc.setName(name);
@@ -270,39 +298,39 @@ public class UsuariosController {
                 logRepo.save(new LogEvent("ACCOUNT "+user+" UPDATED: " + changes, author, ip));
                 System.out.println("Account updated:");
                 System.out.println(acc.toString());
-                return true;
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Failed to update account.");
-            return false;
+            return -2;
         }
     }
 
-    public boolean DeleteUser(String user, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public int DeleteUser(String user, String author, String ip) throws NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             User test = userRepo.findUserByID(user);
             if (user.equals(author)) {
                 System.out.println("Can't delete yourself.");
-                return false;
+                return 0;
             }else if(user.equals("developer")) {
                 System.out.println("Can't delete developer account.");
-                return false;
+                return -1;
             }else {
                 if (test == null) {
                     System.out.println("User doesn't exist.");
-                    return false;
+                    return -2;
                 }else {
                     test.setActive(false);
                     userRepo.save(test);
                     //userRepo.deleteById(user);
                     logRepo.save(new LogEvent("ACCOUNT "+user+" DELETED", author, ip));
                     System.out.println("ACCOUNT " + user + " DELETED");
-                    return true;
+                    return 1;
                 }
             }
         } catch (Exception e) {
             System.out.println("Failed to delete account.");
-            return false;
+            return -3;
         }
     }
 

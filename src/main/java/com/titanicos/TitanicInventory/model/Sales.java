@@ -16,16 +16,16 @@ public class Sales {
     private String id_vendedor;
     private List<Products> products;
     private Date timestamp;
-    private int quantity;
+    private int total;
     private boolean active;
 
     //Constructor
-    public Sales(String id_vendedor, int quantity) {
+    public Sales(String id_vendedor, int total) {
         //this.id_sale = id_sale;
         this.id_vendedor = id_vendedor;
         this.products = new ArrayList<>();
         this.timestamp = new Date();
-        this.quantity = quantity;
+        this.total = total;
         this.active = true;
     }
 
@@ -46,12 +46,12 @@ public class Sales {
         this.timestamp = timestamp;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getTotal() {
+        return total;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
     public boolean isActive() {
@@ -64,13 +64,14 @@ public class Sales {
     public void addProduct(Products product){
         this.products.add(product);
     }
+    public List<Products> getProducts(){return products;}
     //to  string
     @Override
     public String toString() {
         return "Sales{" +
                 "id_vendedor='" + id_vendedor + '\'' +
                 ", timestamp=" + timestamp +
-                ", quantity=" + quantity +
+                ", total=" + total +
                 ", active=" + active +
                 '}';
     }

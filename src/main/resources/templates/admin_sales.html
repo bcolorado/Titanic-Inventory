@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>Sidebar 01</title>
+  <title>Venta</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <link rel="icon" th:href="@{/images/TitanicShip.ico}">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" th:href="@{css/style_home.css}">
@@ -31,9 +32,9 @@
       </ul>
 
       <div class="footer">
-        <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        <p>
           Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Titanic Inventory</a>
-          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+          </p>
       </div>
 
     </div>
@@ -42,44 +43,74 @@
   <!-- Page Content  -->
   <div id="content" class="p-4">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
+    <div class="container-fluid">
+      <button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+        <i class="fa fa-bars"></i>
+        <span class="sr-only">Toggle Menu</span>
+      </button>
+      <a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+        Cerrar sesión
+      </a>
+    </div>
 
-        <button type="button" id="sidebarCollapse" class="btn btn-primary">
-          <i class="fa fa-bars"></i>
-          <span class="sr-only">Toggle Menu</span>
-        </button>
-      </div>
-    </nav>
+    <br/><br/><br/>
 
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-6 text-center mb-5">
-          <td><a th:href="@{admin_new_sales}" class="btn btn-info">Nueva Venta</a></td>
-          <h2 class="heading-section">Ventas</h2>
+        <div class="col-md-12 text-center mb-5">
+          <h2 class="heading-section float-left">Ventas</h2>
+          <a th:href="@{admin_new_sales}" class="btn btn-info float-right">Nuevo venta</a>
         </div>
       </div>
+
+      <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+      <div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
+
       <div class="row">
         <div class="col-md-12">
           <div class="table-wrap">
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>ID</th>
+                <th>No</th>
                 <th>Vendedor</th>
                 <th>Fecha y hora</th>
+                <th>Productos</th>
                 <th>Total</th>
                 <!--<th>Estado</th>-->
-                <th></th>
+
               </tr>
               </thead>
               <tbody>
-              <tr th:each="sale:${sales}">
-                <th scope="row" th:text="${sale.get_id()}"></th>
+              <tr th:each="sale, iterStat:${sales}">
+                <th scope="row" th:text="${iterStat.index}+1"></th>
                 <td th:text="${sale.id_vendedor}"></td>
                 <td th:text="${sale.timestamp}"></td>
-                <td th:number="${sale.quantity}"></td>
-                <td><a th:href="@{edit_sales(id=${sale.get_id()})}" class="btn btn-success">Editar</a></td>
+                <td><details>
+                  <summary>Ver productos</summary>
+                  <!--<ul th:each="product:${sale.getProducts()}">
+                    <li th:text="${product.id_name}"></li>
+                  </ul>-->
+                  <table class="table subtable">
+                    <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Precio</th>
+                      <th>Cantidad</th>
+                      <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product:${sale.getProducts()}">
+                      <th th:text="${product.id_name}"></th>
+                      <td th:text="'$'+${product.precio}"></td>
+                      <td th:text="${product.cantidad}"></td>
+                      <td th:text="'$'+${product.Subtotal}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </details></td>
+                <td th:text="'$'+${sale.total}"></td>
               </tr>
               </tbody>
             </table>

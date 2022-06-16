@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Sidebar 01</title>
+    <title>Editar Usuario</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <link rel="icon" th:href="@{/images/TitanicShip.ico}">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" th:href="@{css/style_home.css}">
@@ -25,6 +25,9 @@
                 <li>
                     <a th:href="@{admin_products}">Productos</a>
                 </li>
+                <li>
+                    <a th:href="@{admin_sales}">Ventas</a>
+                </li>
             </ul>
 
             <div class="footer">
@@ -39,15 +42,17 @@
     <!-- Page Content  -->
     <div id="content" class="p-4">
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
+        <div class="container-fluid">
+            <button type="button" id="sidebarCollapse" class="btn btn-primary float-left">
+                <i class="fa fa-bars"></i>
+                <span class="sr-only">Toggle Menu</span>
+            </button>
+            <a th:href="@{logout}" type="button" id="CerrarSesion" class="btn float-right">
+                Cerrar sesión
+            </a>
+        </div>
 
-                <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                    <i class="fa fa-bars"></i>
-                    <span class="sr-only">Toggle Menu</span>
-                </button>
-            </div>
-        </nav>
+        <br/><br/><br/>
 
         <div class="container">
             <h3 th:text="${userToEdit.id}"></h3>
@@ -64,18 +69,19 @@
                     <select name='new_rol'>
                         <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}" th:selected="${rol==userToEdit.rol}"></option>
                     </select>
-                    <label class="form-control-placeholder">Rol</label>
+                    <br/><label class="form-control-placeholder">Rol</label>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary rounded submit px-3">Guardar cambios</button>
+                    <button type="submit" class="form-control btn btn-info rounded submit px-3">Guardar cambios</button>
                 </div>
                 <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
             </form>
             <form th:action="@{delete_user(id=${userToEdit.id})}" role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
                   method="POST" modelAttribute="userToEdit">
-                <button class="form-control btn btn-primary rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar usuario ${userToEdit.id}?|"
+                <button class="form-control btn btn-danger rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar usuario ${userToEdit.id}?|"
                         onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Borrar Usuario</button>
             </form>
+            <a th:href="@{admin_users}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>
         </div>
     </div>
 </div>
