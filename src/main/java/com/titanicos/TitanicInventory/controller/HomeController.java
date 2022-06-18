@@ -1,6 +1,9 @@
 package com.titanicos.TitanicInventory.controller;
 
 import com.titanicos.TitanicInventory.model.User;
+import com.titanicos.TitanicInventory.repositories.SaleRepository;
+import com.titanicos.TitanicInventory.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +18,10 @@ import java.util.Map;
 public class HomeController {
 
     private static final Random RANDOM = new Random(System.currentTimeMillis());
-
+    @Autowired
+    UserRepository userRepo;
+    @Autowired
+    SaleRepository saleRepo;
     @RequestMapping("/admin")
     public String Home(@SessionAttribute(required=false,name="logged_user") User userAcc, final Model model){
         if (userAcc == null || userAcc.getRol() == null){
@@ -23,6 +29,9 @@ public class HomeController {
         }else if (userAcc.getRol().equals("vendedor")) {
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
+            System.out.println(userRepo.countByActiveAndRol(true,"vendedor"));
+            System.out.println(saleRepo.countByActive(true));
+            System.out.println(saleRepo.sumOfTotals());
             model.addAttribute("logged_user", userAcc);
             model.addAttribute("chartData", getChartData());
             return "admin";

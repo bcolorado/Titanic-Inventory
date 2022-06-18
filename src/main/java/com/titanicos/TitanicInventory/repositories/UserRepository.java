@@ -12,7 +12,8 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("{_id:'?0'}")
     User findUserByID(String ID);
 
-    @Query("{active:true}")
+    @Query("{active:?0}")
     List<User> findUsersByActive(boolean active);
-    public long count();
+    @Query(value = "{active:?0, rol:?1}",count = true)
+    long countByActiveAndRol(Boolean active, String Rol);
 }

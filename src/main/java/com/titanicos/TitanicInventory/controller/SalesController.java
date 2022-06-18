@@ -43,7 +43,7 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
 
-            Sales[] listaSales = saleRepo.findProductsByActive(true).toArray(new Sales[0]);
+            Sales[] listaSales = saleRepo.findSalesByActive(true).toArray(new Sales[0]);
 //            for (Sales sale : listaSales
 //                 ) {
 //                System.out.println(sale.toString());
