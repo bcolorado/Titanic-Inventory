@@ -267,7 +267,7 @@ public class SalesController {
             } else if(respuesta == -1){
                 redirAttrs.addFlashAttribute("error", "No fue posible borrar la venta");
             }
-            return "redirect:"+"admin_products";
+            return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -282,8 +282,13 @@ public class SalesController {
                 return 0;
             }else {
                 test.setActive(false);
+                for (Products n: test.getProducts()){
+                    Products producto= ProductRepo.findProductByID(n.getId_name());
+                    n.setCantidad(producto.getCantidad()+n.getCantidad());
+                    ProductRepo.save(n);
+                }
                 saleRepo.save(test);
-                logRepo.save(new LogEvent("PRODUCT "+id_sale+" DELETED", author, ip));
+                logRepo.save(new LogEvent("SALE "+id_sale+" DELETED", author, ip));
                 return 1;
             }
         } catch (Exception e) {

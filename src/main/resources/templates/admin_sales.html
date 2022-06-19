@@ -80,6 +80,7 @@
                 <th>Fecha y hora</th>
                 <th>Productos</th>
                 <th>Total</th>
+                <th>Anular</th>
                 <!--<th>Estado</th>-->
 
               </tr>
@@ -114,6 +115,10 @@
                   </table>
                 </details></td>
                 <td th:text="'$'+${sale.total}"></td>
+                <td><form th:action="@{delete_sales(id=${sale._id})}" role="form" class="register-form cf-style-1 text-center" style="margin-bottom: 25px;"
+                                     method="POST" modelAttribute="sale">
+                <button class="form-control btn btn-danger rounded submit px-3" th:data-confirm-delete="|Esta seguro de borrar la venta ?|"
+                        onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" >Anular venta</button></form></td>
               </tr>
               </tbody>
             </table>
