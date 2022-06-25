@@ -208,7 +208,7 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             System.out.println("EDIT USER FORM!");
-            Sales saleToEdit = saleRepo.findProductByID(edit_id);
+            Sales saleToEdit = saleRepo.findSaleByID(edit_id);
             model.addAttribute("saleToEdit", saleToEdit);
             return "admin_edit_sales";
         }else {
@@ -276,7 +276,7 @@ public class SalesController {
 
     public int DeleteSale(String id_sale, String author, String ip) {
         try {
-            Sales test = saleRepo.findProductByID(id_sale);
+            Sales test = saleRepo.findSaleByID(id_sale);
             if (test == null || !test.isActive()) {
                 System.out.println("Sale doesn't exist.");
                 return 0;
@@ -299,7 +299,7 @@ public class SalesController {
 
     public int UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) { /* por ahora se usa */
         try {
-            Sales sale = saleRepo.findProductByID(id_sale);
+            Sales sale = saleRepo.findSaleByID(id_sale);
             if ((id_sale.equals(""))) {
                 System.out.println("id input is empty");
                 return 0;

@@ -1,5 +1,6 @@
 package com.titanicos.TitanicInventory.controller;
 
+import com.titanicos.TitanicInventory.model.Consults;
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.SaleRepository;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
@@ -32,6 +33,12 @@ public class HomeController {
             System.out.println(userRepo.countByActiveAndRol(true,"vendedor"));
             System.out.println(saleRepo.countByActive(true));
             System.out.println(saleRepo.sumOfTotals());
+            System.out.println(saleRepo.productsSold());
+            System.out.println(saleRepo.productsIncome());
+            System.out.println(saleRepo.sellerSale());
+            System.out.println(saleRepo.sellerIngresos());
+            System.out.println(saleRepo.ingresosDia());
+            System.out.println(saleRepo.ventasDia());
             model.addAttribute("logged_user", userAcc);
             model.addAttribute("chartData", getChartData());
             return "admin";
