@@ -1,16 +1,22 @@
 package com.titanicos.TitanicInventory.model;
 
-import com.mongodb.lang.Nullable;
-
-public class Consults {
+public class Queries {
     private String id;
     private String dato;
-    public Consults(String id,String dato){
+    public Queries(String id, String dato){
         this.id=id;
         this.dato=dato;
     }
     @Override
     public String toString(){
         return id+ " "+ dato;
+    }
+
+    public String getDato() {
+        return dato;
+    }
+
+    public String getId() {
+        return id;
     }
 }

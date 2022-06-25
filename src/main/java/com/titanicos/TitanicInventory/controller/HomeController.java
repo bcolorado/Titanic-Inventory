@@ -1,6 +1,5 @@
 package com.titanicos.TitanicInventory.controller;
 
-import com.titanicos.TitanicInventory.model.Consults;
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.SaleRepository;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
@@ -10,10 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.util.HashMap;
 import java.util.Random;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class HomeController {

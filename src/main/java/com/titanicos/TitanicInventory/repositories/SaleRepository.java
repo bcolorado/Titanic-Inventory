@@ -1,7 +1,6 @@
 package com.titanicos.TitanicInventory.repositories;
 
-import com.titanicos.TitanicInventory.model.Consults;
-import com.titanicos.TitanicInventory.model.Products;
+import com.titanicos.TitanicInventory.model.Queries;
 import com.titanicos.TitanicInventory.model.Sales;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -22,28 +21,28 @@ public interface SaleRepository extends MongoRepository<Sales, String> {
             "{$unwind:{path:'$products'}}",
             "{$group: { _id: '$products._id', dato: {$sum: '$products.cantidad'}}}",
             "{$sort:{'dato':-1}}"})
-    List<Consults>productsSold();
+    List<Queries>productsSold();
     @Aggregation(pipeline = { "{$match:{active:true}}",
             "{$unwind:{path:'$products'}}",
             "{$group: { _id: '$products._id', dato: {$sum: '$products.Subtotal'}}}",
             "{$sort:{'dato':-1}}"})
-    List<Consults>productsIncome();
+    List<Queries>productsIncome();
     @Aggregation(pipeline = {"{$match:{active:true}}",
             "{$group:{'_id':'$id_vendedor','dato':{$sum:1}}}",
             "{$sort:{'dato':-1}}"})
-    List<Consults> sellerSale();
+    List<Queries> sellerSale();
     @Aggregation(pipeline = {"{$match:{active:true}}",
             "{$group:{'_id':'$id_vendedor','dato':{$sum:$total}}}",
             "{$sort:{'dato':-1}}"})
-    List<Consults> sellerIngresos();
+    List<Queries> sellerIngresos();
     @Aggregation(pipeline = {"{$match:{active:true}}",
             "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:'$total'}}}",
             "{$sort:{'_id':1}}"})
-    List<Consults> ingresosDia();
+    List<Queries> ingresosDia();
     @Aggregation(pipeline = {"{$match:{active:true}}",
             "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:1}}}",
             "{$sort:{'_id':1}}"})
-    List<Consults> ventasDia();
+    List<Queries> ventasDia();
     @Query("{active:?0}")
     List<Sales> findSalesByActive(boolean active);
 }
