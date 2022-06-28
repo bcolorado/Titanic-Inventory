@@ -41,11 +41,11 @@ public interface SaleRepository extends MongoRepository<Sales, String> {
             "{$sort:{'dato':-1}}"})
     List<Queries> sellerIngresos();
     @Aggregation(pipeline = {"{$match:{active:true}}",
-            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:'$total'}}}",
+            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp', timezone:'-05:00'}},'dato':{$sum:'$total'}}}",
             "{$sort:{'_id':1}}"})
     List<Queries> ingresosDia();
     @Aggregation(pipeline = {"{$match:{active:true}}",
-            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:1}}}",
+            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp', timezone:'-05:00'}},'dato':{$sum:1}}}",
             "{$sort:{'_id':1}}"})
     List<Queries> ventasDia();
     @Query("{active:?0}")
@@ -82,11 +82,11 @@ public interface SaleRepository extends MongoRepository<Sales, String> {
             "{$sort:{'dato':-1}}"})
     List<Queries> sellerIngresosInRange(Date from, Date to);
     @Aggregation(pipeline = {"{$match:{active:true,timestamp : {$gte : ?0, $lt : ?1}}}",
-            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:'$total'}}}",
+            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp', timezone:'-05:00'}},'dato':{$sum:'$total'}}}",
             "{$sort:{'_id':1}}"})
     List<Queries> ingresosDiaInRange(Date from, Date to);
     @Aggregation(pipeline = {"{$match:{active:true,timestamp : {$gte : ?0, $lt : ?1}}}",
-            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp'}},'dato':{$sum:1}}}",
+            "{$group:{_id:{$dateToString:{format:'%Y-%m-%d', date:'$timestamp', timezone:'-05:00'}},'dato':{$sum:1}}}",
             "{$sort:{'_id':1}}"})
     List<Queries> ventasDiaInRange(Date from, Date to);
 }
