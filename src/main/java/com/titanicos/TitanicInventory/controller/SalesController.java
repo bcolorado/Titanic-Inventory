@@ -43,12 +43,11 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
 
-            Sales[] listaSales = saleRepo.findProductsByActive(true).toArray(new Sales[0]);
-            for (Sales sale : listaSales
-                 ) {
-                System.out.println(sale.toString());
-
-            }
+            Sales[] listaSales = saleRepo.findSalesByActive(true).toArray(new Sales[0]);
+//            for (Sales sale : listaSales
+//                 ) {
+//                System.out.println(sale.toString());
+//            }
             model.addAttribute("sales",listaSales);
 
             return "admin_sales";
@@ -209,7 +208,7 @@ public class SalesController {
             return "redirect:" + "";
         }else if (userAcc.getRol().equals("administrador")) {
             System.out.println("EDIT USER FORM!");
-            Sales saleToEdit = saleRepo.findProductByID(edit_id);
+            Sales saleToEdit = saleRepo.findSaleByID(edit_id);
             model.addAttribute("saleToEdit", saleToEdit);
             return "admin_edit_sales";
         }else {
@@ -268,7 +267,7 @@ public class SalesController {
             } else if(respuesta == -1){
                 redirAttrs.addFlashAttribute("error", "No fue posible borrar la venta");
             }
-            return "redirect:"+"admin_products";
+            return "redirect:"+"admin_sales";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:" + "";
@@ -277,14 +276,19 @@ public class SalesController {
 
     public int DeleteSale(String id_sale, String author, String ip) {
         try {
-            Sales test = saleRepo.findProductByID(id_sale);
+            Sales test = saleRepo.findSaleByID(id_sale);
             if (test == null || !test.isActive()) {
                 System.out.println("Sale doesn't exist.");
                 return 0;
             }else {
                 test.setActive(false);
+                for (Products n: test.getProducts()){
+                    Products producto= ProductRepo.findProductByID(n.getId_name());
+                    n.setCantidad(producto.getCantidad()+n.getCantidad());
+                    ProductRepo.save(n);
+                }
                 saleRepo.save(test);
-                logRepo.save(new LogEvent("PRODUCT "+id_sale+" DELETED", author, ip));
+                logRepo.save(new LogEvent("SALE "+id_sale+" DELETED", author, ip));
                 return 1;
             }
         } catch (Exception e) {
@@ -295,7 +299,7 @@ public class SalesController {
 
     public int UpdateSale(String id_sale, Date timestamp, int quantity, String author, String ip) { /* por ahora se usa */
         try {
-            Sales sale = saleRepo.findProductByID(id_sale);
+            Sales sale = saleRepo.findSaleByID(id_sale);
             if ((id_sale.equals(""))) {
                 System.out.println("id input is empty");
                 return 0;

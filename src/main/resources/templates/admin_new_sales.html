@@ -28,6 +28,9 @@
                 <li class="active">
                     <a th:href="@{admin_sales}">Ventas</a>
                 </li>
+                <li>
+                    <a th:href="@{admin_log}">Registro de acciones</a>
+                </li>
             </ul>
 
             <div class="footer">
@@ -113,7 +116,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-info rounded submit px-3">Crear Venta</button>
+                    <button type="submit" class="form-control btn btn-success rounded submit px-3">Crear Venta</button>
                 </div>
             </form>
             <a th:href="@{admin_sales}" class="form-control btn btn-info rounded submit px-3">Cancelar</a>

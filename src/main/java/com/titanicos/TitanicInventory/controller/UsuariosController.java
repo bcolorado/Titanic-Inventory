@@ -216,7 +216,10 @@ public class UsuariosController {
             if ((user.equals(""))||(password.equals(""))||(name.equals(""))||(rol.equals(""))) {
                 System.out.println("One or more input values empty.");
                 return 0;
-            }else {
+            }else if (user.matches("[a-zñ_0-9]{5,}")) {
+                System.out.println("wrong user ID pattern.");
+                return 0;
+            }else{
                 if (test == null || !test.getActive()) {
                     byte[] salt = new byte[16];
                     salt = generateSalt();

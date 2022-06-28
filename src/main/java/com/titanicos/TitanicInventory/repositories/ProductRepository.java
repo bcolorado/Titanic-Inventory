@@ -14,7 +14,7 @@ public interface ProductRepository extends MongoRepository<Products, String> {
     Products findProductByID(String ID);
 
 
-    @Query("{active:true}")
+    @Query("{active:?0}")
     List<Products> findProductsByActive(boolean active);
 
 }
