@@ -55,7 +55,7 @@ public class HomeController {
                 System.out.println(rellenar(saleRepo.ingresosDia(),null,null));
                 System.out.println(rellenar(saleRepo.ventasDia(),null,null));
                 model.addAttribute("logged_user", userAcc);
-                model.addAttribute("chartData", getChartData());
+                model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
                 return "admin";
             }
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -86,7 +86,7 @@ public class HomeController {
             System.out.println(rellenar(saleRepo.ventasDiaInRange(from_date, c.getTime()),from,to));
 
             model.addAttribute("logged_user", userAcc);
-            model.addAttribute("chartData", getChartData());
+            model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
             return "admin";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -94,14 +94,12 @@ public class HomeController {
         }
     }
 
-    private List<List<Object>> getChartData() {
-        return List.of(
-                List.of("Mushrooms", RANDOM.nextInt(5)),
-                List.of("Onions", RANDOM.nextInt(5)),
-                List.of("Olives", RANDOM.nextInt(5)),
-                List.of("Zucchini", RANDOM.nextInt(5)),
-                List.of("Pepperoni", RANDOM.nextInt(5))
-        );
+    private List<List<Object>> getChartData(List<Queries> datos) {
+        List<List<Object>> Result = new ArrayList<>();
+        for (Queries x: datos){
+            Result.add(List.of(x.getId(),Integer.parseInt(x.getDato())));
+        }
+        return Result;
     }
     public List<Queries> rellenar(List<Queries> Base, @Nullable String from, @Nullable String to){
         List<Queries> result = new ArrayList<>();
