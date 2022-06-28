@@ -1,9 +1,12 @@
 package com.titanicos.TitanicInventory.controller;
 
 import com.titanicos.TitanicInventory.model.LogEvent;
+import com.titanicos.TitanicInventory.model.Queries;
 import com.titanicos.TitanicInventory.model.User;
 import com.titanicos.TitanicInventory.repositories.SaleRepository;
 import com.titanicos.TitanicInventory.repositories.UserRepository;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -14,10 +17,8 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @Controller
 public class HomeController {
@@ -51,8 +52,10 @@ public class HomeController {
                 System.out.println(saleRepo.sellerIngresos());
                 System.out.println(saleRepo.ingresosDia());
                 System.out.println(saleRepo.ventasDia());
+                System.out.println(rellenar(saleRepo.ingresosDia(),null,null));
+                System.out.println(rellenar(saleRepo.ventasDia(),null,null));
                 model.addAttribute("logged_user", userAcc);
-                model.addAttribute("chartData", getChartData());
+                model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
                 return "admin";
             }
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -78,9 +81,12 @@ public class HomeController {
             System.out.println(saleRepo.sellerIngresosInRange(from_date, c.getTime()));
             System.out.println(saleRepo.ingresosDiaInRange(from_date, c.getTime()));
             System.out.println(saleRepo.ventasDiaInRange(from_date, c.getTime()));
+            System.out.println(from+to);
+            System.out.println(rellenar(saleRepo.ingresosDiaInRange(from_date, c.getTime()),from,to));
+            System.out.println(rellenar(saleRepo.ventasDiaInRange(from_date, c.getTime()),from,to));
 
             model.addAttribute("logged_user", userAcc);
-            model.addAttribute("chartData", getChartData());
+            model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
             return "admin";
         }else {
             System.out.println("Wrong role, redirecting...");
@@ -88,13 +94,40 @@ public class HomeController {
         }
     }
 
-    private List<List<Object>> getChartData() {
-        return List.of(
-                List.of("Mushrooms", RANDOM.nextInt(5)),
-                List.of("Onions", RANDOM.nextInt(5)),
-                List.of("Olives", RANDOM.nextInt(5)),
-                List.of("Zucchini", RANDOM.nextInt(5)),
-                List.of("Pepperoni", RANDOM.nextInt(5))
-        );
+    private List<List<Object>> getChartData(List<Queries> datos) {
+        List<List<Object>> Result = new ArrayList<>();
+        for (Queries x: datos){
+            Result.add(List.of(x.getId(),Integer.parseInt(x.getDato())));
+        }
+        return Result;
+    }
+    public List<Queries> rellenar(List<Queries> Base, @Nullable String from, @Nullable String to){
+        List<Queries> result = new ArrayList<>();
+        int aux =0;
+        LocalDate inicio;
+        LocalDate fin;
+        if (from==null || to==null){
+            inicio = LocalDate.parse(Base.get(0).getId());
+            fin = LocalDate.parse(Base.get(Base.size()-1).getId());
+        }else{
+            inicio = LocalDate.parse(from);
+            fin = LocalDate.parse(to);
+        }
+        LocalDate currentDate = inicio;
+        while (!currentDate.isEqual(fin.plusDays(1))){
+            if(!Base.isEmpty()) {
+                if (LocalDate.parse(Base.get(aux).getId()).isEqual(currentDate)) {
+                    result.add(Base.get(aux));
+                    aux++;
+                } else {
+                    result.add(new Queries(currentDate.toString(), "0"));
+                }
+            }else{
+                result.add(new Queries(currentDate.toString(), "0"));
+            }
+            currentDate = currentDate.plusDays(1);
+        }
+        return result;
+
     }
 }
