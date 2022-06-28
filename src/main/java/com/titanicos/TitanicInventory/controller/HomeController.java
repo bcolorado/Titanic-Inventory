@@ -36,25 +36,24 @@ public class HomeController {
             return "redirect:";
         }else if (userAcc.getRol().equals("administrador")) {
             if (from == null && to == null) {
-                Map<String, Integer> graphData2 = new TreeMap<>();
-                graphData2.put("2016", 147);
-                graphData2.put("2017", 1256);
-                graphData2.put("2018", 3856);
-                graphData2.put("2019", 19807);
-                model.addAttribute("graphData2", graphData2);
-
-                System.out.println("# de vendedores: "+userRepo.countByActiveAndRol(true,"vendedor"));
-                model.addAttribute("vendedores", userRepo.countByActiveAndRol(true,"vendedor"));
-                System.out.println("# de administradores: "+userRepo.countByActiveAndRol(true,"administrador")); // cuenta a developer
-                model.addAttribute("administradores", userRepo.countByActiveAndRol(true,"administrador"));
-                System.out.println("# de usuarios activos: "+saleRepo.countActiveSellers());
-                model.addAttribute("usuarios_activos", saleRepo.countActiveSellers());
-                System.out.println("# de ventas: "+saleRepo.countByActive(true));
-                model.addAttribute("ventas", saleRepo.countByActive(true));
-                System.out.println("# de ventas anuladas: "+saleRepo.countByActive(false));
-                model.addAttribute("ventas_anuladas", saleRepo.countByActive(false));
-                System.out.println("Total ingresos: $"+saleRepo.sumOfTotals());
-                double currencyAmount = saleRepo.sumOfTotals();
+                Long noVendedores= userRepo.countByActiveAndRol(true,"vendedor");
+                Long noAdmins= userRepo.countByActiveAndRol(true,"administrador")-1; // cuenta a developer
+                Long noUsersActive=saleRepo.countActiveSellers();
+                if(noUsersActive==null){
+                    noUsersActive=0L;
+                }
+                Long noVentas=saleRepo.countByActive(true);
+                Long noVentasAnuladas=saleRepo.countByActive(false);
+                Long Ingresos=saleRepo.sumOfTotals();
+                if(Ingresos==null){
+                    Ingresos=0L;
+                }
+                model.addAttribute("vendedores", noVendedores);
+                model.addAttribute("administradores", noAdmins);
+                model.addAttribute("usuarios_activos", noUsersActive);
+                model.addAttribute("ventas", noVentas);
+                model.addAttribute("ventas_anuladas", noVentasAnuladas);
+                double currencyAmount = Ingresos;
                 Locale usa = new Locale("en", "US");
                 NumberFormat dollarFormat = NumberFormat.getCurrencyInstance(usa);
                 model.addAttribute("ingresos", dollarFormat.format(currencyAmount));
@@ -63,22 +62,19 @@ public class HomeController {
                 // Se imprime id dato
                 // id son las categorias para los de pie (productos y vendedores) o las bins para los de barras (dias)
                 // dato es el valor numerico
-                System.out.println(saleRepo.productsSold());
-                model.addAttribute("productsSold", saleRepo.productsSold());
-                System.out.println(saleRepo.productsIncome());
-                model.addAttribute("productsIncome", saleRepo.productsIncome());
-                System.out.println(saleRepo.sellerSale());
-                model.addAttribute("sellerSale", saleRepo.sellerSale());
-                System.out.println(saleRepo.sellerIngresos());
-                model.addAttribute("sellerIngresos", saleRepo.sellerIngresos());
-                System.out.println(saleRepo.ingresosDia());
-                System.out.println(saleRepo.ventasDia());
-                System.out.println(rellenar(saleRepo.ingresosDia(),null,null));
-                model.addAttribute("ingresosDia", rellenar(saleRepo.ingresosDia(),null,null));
-                System.out.println(rellenar(saleRepo.ventasDia(),null,null));
-                model.addAttribute("ventasDia", rellenar(saleRepo.ventasDia(),null,null));
+                List<List<Object>> productosVendidos=getChartData(saleRepo.productsSold());
+                List<List<Object>> productosIngresos=getChartData(saleRepo.productsIncome());
+                List<List<Object>> vendedorVentas=getChartData(saleRepo.sellerSale());
+                List<List<Object>> vendedorIngresos=getChartData(saleRepo.sellerIngresos());
+                Map<String,Integer> ingresosDia=getBarData(rellenar(saleRepo.ingresosDia(),null,null));
+                Map<String,Integer> ventasDia=getBarData(rellenar(saleRepo.ventasDia(),null,null));
+                model.addAttribute("productsSold", productosVendidos);
+                model.addAttribute("productsIncome", productosIngresos);
+                model.addAttribute("sellerSale", vendedorVentas);
+                model.addAttribute("sellerIngresos", vendedorIngresos);
+                model.addAttribute("ingresosDia", ingresosDia);
+                model.addAttribute("ventasDia", ventasDia);
                 model.addAttribute("logged_user", userAcc);
-                model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
                 return "admin";
             }
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -88,35 +84,57 @@ public class HomeController {
             c.add(Calendar.DATE, 1);
             Date to_date = c.getTime();
 
-            System.out.println("# de vendedores: "+userRepo.countByActiveAndRol(true,"vendedor"));
-            System.out.println("# de administradores: "+userRepo.countByActiveAndRol(true,"administrador")); // cuenta a developer
-            System.out.println("# de usuarios activos: "+saleRepo.countActiveSellersInRange(from_date, c.getTime()));
-            System.out.println("# de ventas: "+saleRepo.countByActiveInRange(true, from_date, c.getTime()));
-            System.out.println("# de ventas anuladas: "+saleRepo.countByActiveInRange(false, from_date, c.getTime()));
-            System.out.println("Total ingresos: $"+saleRepo.sumOfTotalsInRange(from_date, c.getTime()));
+            Long noVendedores= userRepo.countByActiveAndRol(true,"vendedor");
+            Long noAdmins= userRepo.countByActiveAndRol(true,"administrador")-1; // cuenta a developer
+            Long noUsersActive=saleRepo.countActiveSellersInRange(from_date,c.getTime());
+            if(noUsersActive==null){
+                noUsersActive=0L;
+            }
+            Long noVentas=saleRepo.countByActiveInRange(true,from_date,c.getTime());
+            Long noVentasAnuladas=saleRepo.countByActiveInRange(false,from_date,c.getTime());
+            Long Ingresos=saleRepo.sumOfTotalsInRange(from_date,c.getTime());
+            if(Ingresos==null){
+                Ingresos=0L;
+            }
+            model.addAttribute("vendedores", noVendedores);
+            model.addAttribute("administradores", noAdmins);
+            model.addAttribute("usuarios_activos", noUsersActive);
+            model.addAttribute("ventas", noVentas);
+            model.addAttribute("ventas_anuladas", noVentasAnuladas);
+            double currencyAmount = Ingresos;
+            Locale usa = new Locale("en", "US");
+            NumberFormat dollarFormat = NumberFormat.getCurrencyInstance(usa);
+            model.addAttribute("ingresos", dollarFormat.format(currencyAmount));
             // listas de objetos "Queries", cada objeto tiene dos atributos, id y dato.
             // Se imprime id dato
             // id son las categorias para los de pie (productos y vendedores) o las bins para los de barras (dias)
             // dato es el valor numerico
-            System.out.println(saleRepo.productsSoldInRange(from_date, c.getTime()));
-            System.out.println(saleRepo.productsIncomeInRange(from_date, c.getTime()));
-            System.out.println(saleRepo.sellerSaleInRange(from_date, c.getTime()));
-            System.out.println(saleRepo.sellerIngresosInRange(from_date, c.getTime()));
-            System.out.println(saleRepo.ingresosDiaInRange(from_date, c.getTime()));
-            System.out.println(saleRepo.ventasDiaInRange(from_date, c.getTime()));
-            System.out.println(from+to);
-            System.out.println(rellenar(saleRepo.ingresosDiaInRange(from_date, c.getTime()),from,to));
-            System.out.println(rellenar(saleRepo.ventasDiaInRange(from_date, c.getTime()),from,to));
-
+            List<List<Object>> productosVendidos=getChartData(saleRepo.productsSoldInRange(from_date,c.getTime()));
+            List<List<Object>> productosIngresos=getChartData(saleRepo.productsIncomeInRange(from_date,c.getTime()));
+            List<List<Object>> vendedorVentas=getChartData(saleRepo.sellerSaleInRange(from_date,c.getTime()));
+            List<List<Object>> vendedorIngresos=getChartData(saleRepo.sellerIngresosInRange(from_date,c.getTime()));
+            Map<String,Integer> ingresosDia=getBarData(rellenar(saleRepo.ingresosDiaInRange(from_date,c.getTime()),from,to));
+            Map<String,Integer> ventasDia=getBarData(rellenar(saleRepo.ventasDiaInRange(from_date,c.getTime()),from,to));
+            model.addAttribute("productsSold", productosVendidos);
+            model.addAttribute("productsIncome", productosIngresos);
+            model.addAttribute("sellerSale", vendedorVentas);
+            model.addAttribute("sellerIngresos", vendedorIngresos);
+            model.addAttribute("ingresosDia", ingresosDia);
+            model.addAttribute("ventasDia", ventasDia);
             model.addAttribute("logged_user", userAcc);
-            model.addAttribute("chartData", getChartData(saleRepo.productsIncome()));
             return "admin";
         }else {
             System.out.println("Wrong role, redirecting...");
             return "redirect:";
         }
     }
-
+    public Map<String, Integer> getBarData(List<Queries> datos) {
+        Map<String, Integer> Result = new TreeMap<>();
+        for (Queries x: datos){
+            Result.put(x.getId(),Integer.valueOf(x.getDato()));
+        }
+        return Result;
+    }
     private List<List<Object>> getChartData(List<Queries> datos) {
         List<List<Object>> Result = new ArrayList<>();
         for (Queries x: datos){
@@ -141,9 +159,8 @@ public class HomeController {
         LocalDate currentDate = inicio;
         while (!currentDate.isEqual(fin.plusDays(1))){
             if(!Base.isEmpty()) {
-                if (LocalDate.parse(Base.get(aux).getId()).isEqual(currentDate)) {
-                    result.add(Base.get(aux));
-                    aux++;
+                if (LocalDate.parse(Base.get(0).getId()).isEqual(currentDate)) {
+                    result.add(Base.remove(0));
                 } else {
                     result.add(new Queries(currentDate.toString(), "0"));
                 }

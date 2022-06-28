@@ -11,17 +11,17 @@ import java.util.List;
 
 public interface SaleRepository extends MongoRepository<Sales, String> {
     @Query(value = "{active:?0}",count = true)
-    long countByActive(Boolean active);
+    Long countByActive(Boolean active);
     @Aggregation(pipeline ={ "{$match:{active:true}}",
             "{$group: { _id: '', total: {$sum: $total}}}"})
-    long sumOfTotals();
+    Long sumOfTotals();
     @Query("{_id:'?0'}")
     Sales findSaleByID(String ID);
 
     @Aggregation(pipeline = { "{$match:{active:true}}",
             "{$group: { _id: '$id_vendedor', dato: {$sum:1}}}",
             "{$count: 'id_vendedor'}"})
-    long countActiveSellers();
+    Long countActiveSellers();
     @Aggregation(pipeline = { "{$match:{active:true}}",
             "{$unwind:{path:'$products'}}",
             "{$group: { _id: '$products._id', dato: {$sum: '$products.cantidad'}}}",
@@ -54,15 +54,15 @@ public interface SaleRepository extends MongoRepository<Sales, String> {
 
     // mismas de arriba pero para fitlrar en rango
     @Query(value = "{active:?0, 'timestamp' : {$gte : ?1, $lt : ?2}}",count = true)
-    long countByActiveInRange(Boolean active, Date from, Date to);
+    Long countByActiveInRange(Boolean active, Date from, Date to);
     @Aggregation(pipeline ={ "{$match:{active:true,timestamp : {$gte : ?0, $lt : ?1}}}",
             "{$group: { _id: '', total: {$sum: $total}}}"})
-    long sumOfTotalsInRange(Date from, Date to);
+    Long sumOfTotalsInRange(Date from, Date to);
 
     @Aggregation(pipeline = { "{$match:{active:true,timestamp : {$gte : ?0, $lt : ?1}}}",
             "{$group: { _id: '$id_vendedor', dato: {$sum:1}}}",
             "{$count: 'id_vendedor'}"})
-    long countActiveSellersInRange(Date from, Date to);
+    Long countActiveSellersInRange(Date from, Date to);
     @Aggregation(pipeline = { "{$match:{active:true,timestamp : {$gte : ?0, $lt : ?1}}}",
             "{$unwind:{path:'$products'}}",
             "{$group: { _id: '$products._id', dato: {$sum: '$products.cantidad'}}}",
