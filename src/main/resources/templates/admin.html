@@ -17,8 +17,11 @@
 
 		  // Set a callback to run when the Google Visualization API is loaded.
 		  google.charts.setOnLoadCallback(drawPieChart1);
-		  google.charts.setOnLoadCallback(drawScatterChart1);
+		  google.charts.setOnLoadCallback(drawPieChart2);
 		  google.charts.setOnLoadCallback(drawColumn1);
+		  google.charts.setOnLoadCallback(drawColumn2);
+		  google.charts.setOnLoadCallback(drawColumn3);
+		  google.charts.setOnLoadCallback(drawColumn4);
 
 		  window.addEventListener("load", function() {
 			  window.dispatchEvent(new Event('resize'));
@@ -26,101 +29,125 @@
 
 		  window.onresize = function() {
 			  drawPieChart1();
-			  drawScatterChart1();
+			  drawPieChart2();
 			  drawColumn1();
+			  drawColumn2();
+			  drawColumn3();
+			  drawColumn4();
 		  }
 
-
-		  // Callback that creates and populates a data table,
-		  // instantiates the pie chart, passes in the data and
-		  // draws it.
 		  function drawPieChart1() {
 
-			  // Create the data table.
 			  var data = new google.visualization.DataTable();
 			  data.addColumn('string', 'Producto');
 			  data.addColumn('number', 'Ventas');
-			  data.addRows([[${chartData}]]);
+			  data.addRows([[${productsSold}]]);
 
-			  // Set chart options
 			  var options = {'title':'Productos vendidos',
 				  width: '100%',
 				  height: '100%',
 				  backgroundColor: '#FAFAFA'};
 
-			  // Instantiate and draw our chart, passing in some options.
 			  var chart = new google.visualization.PieChart(document.getElementById('pieChart1'));
 			  chart.draw(data, options);
 		  }
 
-		  function drawScatterChart1() {
-			  var data = google.visualization.arrayToDataTable([
-				  ['Age', 'Weight'],
-				  [ 8,      12],
-				  [ 4,      5.5],
-				  [ 11,     14],
-				  [ 4,      5],
-				  [ 3,      3.5],
-				  [ 6.5,    7]
-			  ]);
+		  function drawPieChart2() {
 
-			  var options = {
-				  title: 'Age vs. Weight comparison',
-				  hAxis: {title: 'Age', minValue: 0, maxValue: 15},
-				  vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
-				  legend: 'none',
+			  // Create the data table.
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string', 'Producto');
+			  data.addColumn('number', 'Ingresos');
+			  data.addRows([[${productsIncome}]]);
+
+			  var options = {'title':'Ingresos por producto',
 				  width: '100%',
 				  height: '100%',
-				  backgroundColor: '#FAFAFA'
-			  };
+				  backgroundColor: '#FAFAFA'};
 
-			  var chart = new google.visualization.ScatterChart(document.getElementById('scatterChart1'));
-
+			  var chart = new google.visualization.PieChart(document.getElementById('pieChart2'));
 			  chart.draw(data, options);
 		  }
 
 		  function drawColumn1() {
-
 			  var data = new google.visualization.DataTable();
-			  data.addColumn('timeofday', 'Time of Day');
-			  data.addColumn('number', 'Motivation Level');
-
-			  data.addRows([
-				  [{v: [8, 0, 0], f: '8 am'}, 1],
-				  [{v: [9, 0, 0], f: '9 am'}, 2],
-				  [{v: [10, 0, 0], f:'10 am'}, 3],
-				  [{v: [11, 0, 0], f: '11 am'}, 4],
-				  [{v: [12, 0, 0], f: '12 pm'}, 5],
-				  [{v: [13, 0, 0], f: '1 pm'}, 6],
-				  [{v: [14, 0, 0], f: '2 pm'}, 7],
-				  [{v: [15, 0, 0], f: '3 pm'}, 8],
-				  [{v: [16, 0, 0], f: '4 pm'}, 9],
-				  [{v: [17, 0, 0], f: '5 pm'}, 10],
-			  ]);
-
+			  data.addColumn('string', 'Vendedor');
+			  data.addColumn('number', 'Ventas');
+			  Object.keys([[${sellerSale}]]).forEach(function(key) {
+				  data.addRow([ key, [[${sellerSale}]][key] ]);
+			  });
 			  var options = {
-				  title: 'Motivation Level Throughout the Day',
-				  hAxis: {
-					  title: 'Time of Day',
-					  format: 'h:mm a',
-					  viewWindow: {
-						  min: [7, 30, 0],
-						  max: [17, 30, 0]
-					  }
+				  title : 'Ventas por vendedor',
+				  hAxis : {
+					  title : 'Vendedor',
 				  },
-				  vAxis: {
-					  title: 'Rating'
-				  },
-				  width: '100%',
-				  height: '100%',
-				  backgroundColor: '#FAFAFA'
+				  vAxis : {
+					  title : 'Ventas'
+				  }
 			  };
-
 			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart1'));
-
 			  chart.draw(data, options);
 		  }
 
+		  function drawColumn2() {
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string', 'Vendedor');
+			  data.addColumn('number', 'Ingresos');
+			  Object.keys([[${sellerIngresos}]]).forEach(function(key) {
+				  data.addRow([ key, [[${sellerIngresos}]][key] ]);
+			  });
+			  var options = {
+				  title : 'Ingresos por vendedor',
+				  hAxis : {
+					  title : 'Vendedor',
+				  },
+				  vAxis : {
+					  title : 'Ingresos'
+				  }
+			  };
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart2'));
+			  chart.draw(data, options);
+		  }
+
+		  function drawColumn3() {
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string', 'Día');
+			  data.addColumn('number', 'Ingresos');
+			  Object.keys([[${ingresosDia}]]).forEach(function(key) {
+				  data.addRow([ key, [[${ingresosDia}]][key] ]);
+			  });
+			  var options = {
+				  title : 'Ingresos por día',
+				  hAxis : {
+					  title : 'Día',
+				  },
+				  vAxis : {
+					  title : 'Ingresos'
+				  }
+			  };
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart3'));
+			  chart.draw(data, options);
+		  }
+
+		  function drawColumn4() {
+			  var data = new google.visualization.DataTable();
+			  data.addColumn('string', 'Día');
+			  data.addColumn('number', 'Ventas');
+			  Object.keys([[${ventasDia}]]).forEach(function(key) {
+				  data.addRow([ key, [[${ventasDia}]][key] ]);
+			  });
+			  var options = {
+				  title : 'Ventas por día',
+				  hAxis : {
+					  title : 'Día',
+				  },
+				  vAxis : {
+					  title : 'Ventas'
+				  }
+			  };
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart4'));
+			  chart.draw(data, options);
+		  }
 
 	  </script>
   </head>
@@ -149,9 +176,9 @@
 	        </ul>
 
 	        <div class="footer">
-	        	<p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Titanic Inventory</a>
-						  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+	        	<p>
+					  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Titanic Inventory</a>
+				</p>
 	        </div>
 
 	      </div>
@@ -173,39 +200,58 @@
 			</nav>
 
 			<br/><br/><br/>
-			<h2 class="mb-4">Página principal</h2>
 
-			<!--	Controles filtrar por fechas	-->
-			<div heading-section float-right>
-				<form>
-					<label class="form-control-placeholder">Desde</label>
-					<input name="from" type="date" id="from_date" min="1970-01-01" max="2022-01-02" class="" oninput="to_date.min=from_date.value" required>
-					<label class="form-control-placeholder">Hasta</label>
-					<input name="to" type="date" id="to_date" min="1970-01-01" max="2022-01-02" class="" oninput="from_date.max=to_date.value" required>
-					<button class="btn btn-info">Filtrar</button>
-				</form>
-			</div>
+			<nav>
+				<div class="container-fluid mb-4">
+					<h2 class="float-left">Página principal</h2>
+					<form class="float-right">
+						<label class="form-control-placeholder">Desde</label>
+						<input name="from" type="date" id="from_date" min="1970-01-01" max="2022-01-02" class="" oninput="to_date.min=from_date.value" required>
+						<label class="form-control-placeholder">Hasta</label>
+						<input name="to" type="date" id="to_date" min="1970-01-01" max="2022-01-02" class="" oninput="from_date.max=to_date.value" required>
+						<button class="btn btn-info">Filtrar</button>
+					</form>
+				</div>
+			</nav>
 
-
+			<br/><br/><br/>
 
 			<div class="row justify-content-start mb-4 ml-0">
 				<div class="col" style="border: 1px solid #8B8C89">
-					Número de vendedores<br/>###
+					Número de vendedores<br/><h3 th:text="${vendedores}"></h3>
 				</div>
 				<div class="col" style="border: 1px solid #8B8C89">
-					Número de ventas<br/>###
+					Número de administradores<br/><h3 th:text="${administradores}"></h3>
 				</div>
 				<div class="col" style="border: 1px solid #8B8C89">
-					Total de ingresos<br/>###
+					Total de usuarios activos<br/><h3 th:text="${usuarios_activos}"></h3>
+				</div>
+				<div class="col" style="border: 1px solid #8B8C89">
+					Número de ventas<br/><h3 th:text="${ventas}"></h3>
+				</div>
+				<div class="col" style="border: 1px solid #8B8C89">
+					Número de ventas anuladas<br/><h3 th:text="${ventas_anuladas}"></h3>
+				</div>
+				<div class="col" style="border: 1px solid #8B8C89">
+					Total de ingresos<br/><h3 th:text="${ingresos}"></h3>
 				</div>
 			</div>
 			<div class="container">
 				<div class="row justify-content-start">
 					<div class="col" id="pieChart1" style="border: 1px solid #8B8C89"></div>
-					<div class="col" id="scatterChart1" style="border: 1px solid #8B8C89"></div>
+					<div class="col" id="pieChart2" style="border: 1px solid #8B8C89"></div>
 				</div>
 				<div class="row justify-content-start">
 					<div class="col" id="columnChart1" style="border: 1px solid #8B8C89"></div>
+				</div>
+				<div class="row justify-content-start">
+					<div class="col" id="columnChart2" style="border: 1px solid #8B8C89"></div>
+				</div>
+				<div class="row justify-content-start">
+					<div class="col" id="columnChart3" style="border: 1px solid #8B8C89"></div>
+				</div>
+				<div class="row justify-content-start">
+					<div class="col" id="columnChart4" style="border: 1px solid #8B8C89"></div>
 				</div>
 			</div>
 		</div>
