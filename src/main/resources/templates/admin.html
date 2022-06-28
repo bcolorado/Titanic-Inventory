@@ -18,10 +18,10 @@
 		  // Set a callback to run when the Google Visualization API is loaded.
 		  google.charts.setOnLoadCallback(drawPieChart1);
 		  google.charts.setOnLoadCallback(drawPieChart2);
+		  google.charts.setOnLoadCallback(drawPieChart3);
+		  google.charts.setOnLoadCallback(drawPieChart4);
 		  google.charts.setOnLoadCallback(drawColumn1);
 		  google.charts.setOnLoadCallback(drawColumn2);
-		  google.charts.setOnLoadCallback(drawColumn3);
-		  google.charts.setOnLoadCallback(drawColumn4);
 
 		  window.addEventListener("load", function() {
 			  window.dispatchEvent(new Event('resize'));
@@ -30,10 +30,10 @@
 		  window.onresize = function() {
 			  drawPieChart1();
 			  drawPieChart2();
+			  drawPieChart3();
+			  drawPieChart4();
 			  drawColumn1();
 			  drawColumn2();
-			  drawColumn3();
-			  drawColumn4();
 		  }
 
 		  function drawPieChart1() {
@@ -69,47 +69,41 @@
 			  chart.draw(data, options);
 		  }
 
-		  function drawColumn1() {
+		  function drawPieChart3() {
+
+			  // Create the data table.
 			  var data = new google.visualization.DataTable();
 			  data.addColumn('string', 'Vendedor');
 			  data.addColumn('number', 'Ventas');
-			  Object.keys([[${sellerSale}]]).forEach(function(key) {
-				  data.addRow([ key, [[${sellerSale}]][key] ]);
-			  });
-			  var options = {
-				  title : 'Ventas por vendedor',
-				  hAxis : {
-					  title : 'Vendedor',
-				  },
-				  vAxis : {
-					  title : 'Ventas'
-				  }
-			  };
-			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart1'));
+			  data.addRows([[${sellerSale}]]);
+
+			  var options = {'title':'Ventas por vendedor',
+				  width: '100%',
+				  height: '100%',
+				  backgroundColor: '#FAFAFA'};
+
+			  var chart = new google.visualization.PieChart(document.getElementById('pieChart3'));
 			  chart.draw(data, options);
 		  }
 
-		  function drawColumn2() {
+		  function drawPieChart4() {
+
+			  // Create the data table.
 			  var data = new google.visualization.DataTable();
 			  data.addColumn('string', 'Vendedor');
 			  data.addColumn('number', 'Ingresos');
-			  Object.keys([[${sellerIngresos}]]).forEach(function(key) {
-				  data.addRow([ key, [[${sellerIngresos}]][key] ]);
-			  });
-			  var options = {
-				  title : 'Ingresos por vendedor',
-				  hAxis : {
-					  title : 'Vendedor',
-				  },
-				  vAxis : {
-					  title : 'Ingresos'
-				  }
-			  };
-			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart2'));
+			  data.addRows([[${sellerIngresos}]]);
+
+			  var options = {'title':'Ingresos por vendedor',
+				  width: '100%',
+				  height: '100%',
+				  backgroundColor: '#FAFAFA'};
+
+			  var chart = new google.visualization.PieChart(document.getElementById('pieChart4'));
 			  chart.draw(data, options);
 		  }
 
-		  function drawColumn3() {
+		  function drawColumn1() {
 			  var data = new google.visualization.DataTable();
 			  data.addColumn('string', 'Día');
 			  data.addColumn('number', 'Ingresos');
@@ -125,11 +119,11 @@
 					  title : 'Ingresos'
 				  }
 			  };
-			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart3'));
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart1'));
 			  chart.draw(data, options);
 		  }
 
-		  function drawColumn4() {
+		  function drawColumn2() {
 			  var data = new google.visualization.DataTable();
 			  data.addColumn('string', 'Día');
 			  data.addColumn('number', 'Ventas');
@@ -145,7 +139,7 @@
 					  title : 'Ventas'
 				  }
 			  };
-			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart4'));
+			  var chart = new google.visualization.ColumnChart(document.getElementById('columnChart2'));
 			  chart.draw(data, options);
 		  }
 
@@ -242,16 +236,14 @@
 					<div class="col" id="pieChart2" style="border: 1px solid #8B8C89"></div>
 				</div>
 				<div class="row justify-content-start">
+					<div class="col" id="pieChart3" style="border: 1px solid #8B8C89"></div>
+					<div class="col" id="pieChart4" style="border: 1px solid #8B8C89"></div>
+				</div>
+				<div class="row justify-content-start">
 					<div class="col" id="columnChart1" style="border: 1px solid #8B8C89"></div>
 				</div>
 				<div class="row justify-content-start">
 					<div class="col" id="columnChart2" style="border: 1px solid #8B8C89"></div>
-				</div>
-				<div class="row justify-content-start">
-					<div class="col" id="columnChart3" style="border: 1px solid #8B8C89"></div>
-				</div>
-				<div class="row justify-content-start">
-					<div class="col" id="columnChart4" style="border: 1px solid #8B8C89"></div>
 				</div>
 			</div>
 		</div>
