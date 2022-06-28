@@ -176,13 +176,15 @@
 			<h2 class="mb-4">Página principal</h2>
 
 			<!--	Controles filtrar por fechas	-->
-			<form>
-				<button class="btn btn-info float-right" onclick="filter()">Filtrar</button>
-				<input name="to_date" type="date" id="to_date" min="1970-01-01" max="2022-01-02" class="float-right" oninput="from_date.max=to_date.value" required>
-				<label class="form-control-placeholder float-right">Hasta</label>
-				<input name="from_date" type="date" id="from_date" min="1970-01-01" max="2022-01-02" class="float-right" oninput="to_date.min=from_date.value" required>
-				<label class="form-control-placeholder float-right">Desde</label>
-			</form>
+			<div heading-section float-right>
+				<form>
+					<label class="form-control-placeholder">Desde</label>
+					<input name="from" type="date" id="from_date" min="1970-01-01" max="2022-01-02" class="" oninput="to_date.min=from_date.value" required>
+					<label class="form-control-placeholder">Hasta</label>
+					<input name="to" type="date" id="to_date" min="1970-01-01" max="2022-01-02" class="" oninput="from_date.max=to_date.value" required>
+					<button class="btn btn-info">Filtrar</button>
+				</form>
+			</div>
 
 
 
@@ -233,14 +235,6 @@
 	}
 	document.getElementById("from_date").setAttribute("max", update_today());
 	document.getElementById("to_date").setAttribute("max", update_today());
-	function filter() {
-			  var from = document.getElementById("from_date").value;
-			  var to = document.getElementById("to_date").value;
-			  var url = "admin?from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to);
-			  if (from && to) {
-				window.location.href = url;
-			  }
-		};
 	</script>
   </body>
 </html>
